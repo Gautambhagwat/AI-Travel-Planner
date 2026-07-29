@@ -1,48 +1,72 @@
+import { useEffect, useState } from "react";
+
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import WelcomeBanner from "../../components/dashboard/WelcomeBanner";
 import StatCard from "../../components/dashboard/StatCard";
 import QuickActions from "../../components/dashboard/QuickActions";
 import RecentTrips from "../../components/dashboard/RecentTrips";
 import AIRecommendations from "../../components/dashboard/AIRecommendations";
+import { getSavedTrips } from "../../services/tripService";
 
 function Dashboard() {
+  const [trips, setTrips] = useState([]);
+
+  useEffect(() => {
+    setTrips(getSavedTrips());
+  }, []);
+
+  const totalEstimatedCost = trips.reduce(
+    (total, trip) => total + trip.totalCost,
+    0
+  );
+
+  const destinations = new Set(
+    trips.map((trip) => trip.destination)
+  ).size;
+
+  const formattedCost = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(totalEstimatedCost);
+
   return (
     <DashboardLayout>
 
       <WelcomeBanner />
 
-      <div className="mb-8 grid gap-6 md:grid-cols-3">
+      <section className="my-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
 
         <StatCard
-          title="Trips"
-          value="12"
+          title="Saved Trips"
+          value={trips.length}
         />
 
         <StatCard
-          title="Countries"
-          value="6"
+          title="Destinations"
+          value={destinations}
         />
 
         <StatCard
-          title="Saved"
-          value="₹45,000"
+          title="Estimated Budget"
+          value={formattedCost}
         />
 
-      </div>
+      </section>
 
-      <div className="mb-8">
+      <section className="mb-10">
 
         <QuickActions />
 
-      </div>
+      </section>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <section className="grid gap-6 lg:grid-cols-2">
 
-        <RecentTrips />
+        <RecentTrips trips={trips} />
 
         <AIRecommendations />
 
-      </div>
+      </section>
 
     </DashboardLayout>
   );

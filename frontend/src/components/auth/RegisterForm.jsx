@@ -1,124 +1,216 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { registerSchema } from "../../utils/validationSchemas";
+import { Mail, User } from "lucide-react";
 
 import Button from "../common/Button";
-
 import PasswordInput from "./PasswordInput";
+import useAuth from "../../hooks/useAuth";
+import { registerSchema } from "../../utils/validationSchemas";
 
-function RegisterForm(){
+function RegisterForm() {
+  const [submissionError, setSubmissionError] = useState("");
 
-const{
+  const navigate = useNavigate();
+  const { register: registerUser } = useAuth();
 
-register,
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(registerSchema),
+  });
 
-handleSubmit,
+  const submit = async ({ name, email, password }) => {
+    setSubmissionError("");
 
-formState:{errors}
+    try {
+      await registerUser({ name, email, password });
 
-}=useForm({
+      navigate("/login", {
+        state: {
+          registrationSuccess: true,
+        },
+      });
+    } catch (error) {
+      setSubmissionError(
+        error.message || "Unable to create your account."
+      );
+    }
+  };
 
-resolver:zodResolver(registerSchema)
+  return (
+    <form
+      onSubmit={handleSubmit(submit)}
+      className="space-y-6"
+    >
+      {/* Full Name */}
 
-});
+      <div>
+        <label className="mb-2 block text-sm font-semibold text-secondary-700">
+          Full Name
+        </label>
 
-const submit=(data)=>{
+        <div className="relative">
 
-console.log(data);
+          <User
+            size={18}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-400"
+          />
 
-}
+          <input
+            placeholder="Enter your full name"
+            autoComplete="name"
+            {...register("name")}
+            className="
+              w-full
+              rounded-2xl
+              border
+              border-secondary-200
+              bg-white
+              py-3
+              pl-12
+              pr-4
+              outline-none
+              transition
+              focus:border-primary-500
+              focus:ring-4
+              focus:ring-primary-100
+            "
+          />
 
-return(
+        </div>
 
-<form
-onSubmit={handleSubmit(submit)}
-className="space-y-5"
->
+        {errors.name && (
+          <p className="mt-2 text-sm text-red-600">
+            {errors.name.message}
+          </p>
+        )}
+      </div>
 
-<div>
+      {/* Email */}
 
-<input
+      <div>
+        <label className="mb-2 block text-sm font-semibold text-secondary-700">
+          Email Address
+        </label>
 
-placeholder="Full Name"
+        <div className="relative">
 
-{...register("name")}
+          <Mail
+            size={18}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-400"
+          />
 
-className="w-full border rounded-lg p-3"
+          <input
+            type="email"
+            placeholder="Enter your email"
+            autoComplete="email"
+            {...register("email")}
+            className="
+              w-full
+              rounded-2xl
+              border
+              border-secondary-200
+              bg-white
+              py-3
+              pl-12
+              pr-4
+              outline-none
+              transition
+              focus:border-primary-500
+              focus:ring-4
+              focus:ring-primary-100
+            "
+          />
 
-/>
+        </div>
 
-<p className="text-red-500">
+        {errors.email && (
+          <p className="mt-2 text-sm text-red-600">
+            {errors.email.message}
+          </p>
+        )}
+      </div>
 
-{errors.name?.message}
+      {/* Password */}
 
-</p>
+      <div>
+        <label className="mb-2 block text-sm font-semibold text-secondary-700">
+          Password
+        </label>
 
-</div>
+        <PasswordInput
+          placeholder="Create a password"
+          register={register}
+          name="password"
+        />
 
-<div>
+        {errors.password && (
+          <p className="mt-2 text-sm text-red-600">
+            {errors.password.message}
+          </p>
+        )}
+      </div>
 
-<input
+      {/* Confirm Password */}
 
-placeholder="Email"
+      <div>
+        <label className="mb-2 block text-sm font-semibold text-secondary-700">
+          Confirm Password
+        </label>
 
-{...register("email")}
+        <PasswordInput
+          placeholder="Confirm your password"
+          register={register}
+          name="confirmPassword"
+        />
 
-className="w-full border rounded-lg p-3"
+        {errors.confirmPassword && (
+          <p className="mt-2 text-sm text-red-600">
+            {errors.confirmPassword.message}
+          </p>
+        )}
+      </div>
 
-/>
+      {/* Error */}
 
-<p className="text-red-500">
+      {submissionError && (
+        <div
+          className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+          role="alert"
+        >
+          {submissionError}
+        </div>
+      )}
 
-{errors.email?.message}
+      {/* Submit */}
 
-</p>
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full"
+      >
+        {isSubmitting
+          ? "Creating Account..."
+          : "Create Account"}
+      </Button>
 
-</div>
+      {/* Login */}
 
-<PasswordInput
-
-placeholder="Password"
-
-register={register}
-
-name="password"
-
-/>
-
-<p className="text-red-500">
-
-{errors.password?.message}
-
-</p>
-
-<PasswordInput
-
-placeholder="Confirm Password"
-
-register={register}
-
-name="confirmPassword"
-
-/>
-
-<p className="text-red-500">
-
-{errors.confirmPassword?.message}
-
-</p>
-
-<Button type="submit">
-
-Create Account
-
-</Button>
-
-</form>
-
-);
-
+      <div className="border-t border-secondary-100 pt-6 text-center text-sm text-secondary-600">
+        Already have an account?{" "}
+        <Link
+          to="/login"
+          className="font-semibold text-primary-600 hover:text-primary-700"
+        >
+          Sign In
+        </Link>
+      </div>
+    </form>
+  );
 }
 
 export default RegisterForm;

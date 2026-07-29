@@ -1,13 +1,19 @@
+import Sidebar from "./Sidebar";
+
 function MainLayout({ children }) {
-    return (
-        <>
-            <div>Navbar</div>
+  return (
+    <div className="flex min-h-screen bg-secondary-50">
 
-            {children}
+      <Sidebar />
 
-            <div>Footer</div>
-        </>
-    );
+      <main className="flex-1 overflow-y-auto">
+
+        {children}
+
+      </main>
+
+    </div>
+  );
 }
 
 export default MainLayout;

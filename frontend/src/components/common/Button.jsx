@@ -5,22 +5,36 @@ function Button({
   size = "md",
   onClick,
   disabled = false,
+  className = "",
+  fullWidth = false,
 }) {
   const base =
-    "rounded-lg font-medium transition-all duration-200 focus:outline-none";
+    "inline-flex items-center justify-center rounded-xl font-medium transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]";
 
   const variants = {
-    primary: "bg-blue-600 text-white hover:bg-blue-700",
-    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",
-    outline: "border border-blue-600 text-blue-600 hover:bg-blue-50",
-    danger: "bg-red-600 text-white hover:bg-red-700",
-    success: "bg-green-600 text-white hover:bg-green-700",
+    primary:
+      "bg-primary-600 text-white hover:bg-primary-700 shadow-sm",
+
+    secondary:
+      "border border-secondary-200 bg-white text-secondary-700 hover:bg-secondary-50",
+
+    outline:
+      "border border-primary-300 bg-white text-primary-700 hover:bg-primary-50",
+
+    ghost:
+      "bg-transparent text-secondary-700 hover:bg-secondary-100",
+
+    danger:
+      "bg-error-600 text-white hover:bg-error-700",
+
+    success:
+      "bg-success-600 text-white hover:bg-success-700",
   };
 
   const sizes = {
-    sm: "px-3 py-2 text-sm",
-    md: "px-5 py-2",
-    lg: "px-6 py-3 text-lg",
+    sm: "h-9 px-4 text-sm",
+    md: "h-11 px-5 text-sm",
+    lg: "h-12 px-6 text-base",
   };
 
   return (
@@ -28,7 +42,13 @@ function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`${base} ${variants[variant]} ${sizes[size]}`}
+      className={`
+        ${base}
+        ${variants[variant]}
+        ${sizes[size]}
+        ${fullWidth ? "w-full" : ""}
+        ${className}
+      `}
     >
       {children}
     </button>

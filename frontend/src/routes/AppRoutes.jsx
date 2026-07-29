@@ -43,6 +43,7 @@ function AppRoutes() {
           <Route path="/planner" element={<Planner />} />
           <Route path="/saved-trips" element={<SavedTrips />} />
           <Route path="/trip-details" element={<TripDetails />} />
+          <Route path="/trip-details/:id" element={<TripDetails />} />
           <Route path="/destination/:id" element={<Destination />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />

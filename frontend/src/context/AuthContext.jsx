@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { loginUser } from "../services/authService";
+import { loginUser, registerUser } from "../services/authService";
 
 export const AuthContext = createContext();
 
@@ -10,7 +10,12 @@ function AuthProvider({ children }) {
     const savedUser = localStorage.getItem("user");
 
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+      }
     }
   }, []);
 
@@ -25,6 +30,8 @@ function AuthProvider({ children }) {
     return response;
   };
 
+  const register = async (details) => registerUser(details);
+
   const logout = () => {
     setUser(null);
 
@@ -37,6 +44,7 @@ function AuthProvider({ children }) {
       value={{
         user,
         login,
+        register,
         logout,
       }}
     >
