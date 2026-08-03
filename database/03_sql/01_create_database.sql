@@ -1,5 +1,3 @@
-CREATE DATABASE IF NOT EXISTS ai_travel_website
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE ai_travel_website;
 
 USE ai_travel_website;
