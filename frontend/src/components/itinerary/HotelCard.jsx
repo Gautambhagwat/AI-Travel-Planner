@@ -17,7 +17,7 @@ function HotelCard({ hotelName, accommodation }) {
           </p>
 
           <h2 className="mt-2 text-2xl font-bold text-secondary-900">
-            {hotelName}
+            Not Added
           </h2>
         </div>
 
@@ -41,7 +41,7 @@ function HotelCard({ hotelName, accommodation }) {
             </p>
 
             <p className="font-semibold text-secondary-900">
-              {accommodation}
+              Future Recommendation
             </p>
           </div>
         </div>

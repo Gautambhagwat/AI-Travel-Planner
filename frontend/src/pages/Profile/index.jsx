@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import {
   User,
   MapPin,
@@ -9,21 +11,43 @@ import {
   Settings,
 } from "lucide-react";
 
+import { getUserByEmail } from "../../services/userService";
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import Button from "../../components/common/Button";
+import EditProfileModal from "../../components/profile/EditProfileModal";
 
 function Profile() {
-  const user = {
-    name: "Traveler",
-    email: "traveler@example.com",
-    joined: "July 2026",
-    travelStyle: "Luxury",
-    preferredTransport: "Flight",
-    budget: "Medium",
-    trips: 12,
-    countries: 7,
-    days: 48,
+  const [user, setUser] = useState(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const loadProfile = async () => {
+    try {
+      const loggedInUser = JSON.parse(localStorage.getItem("user"));
+
+      if (!loggedInUser?.email) return;
+
+      const profile = await getUserByEmail(loggedInUser.email);
+
+      setUser(profile);
+
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  if (!user) {
+    return (
+        <DashboardLayout>
+          <div className="p-8">
+            Loading profile...
+          </div>
+        </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -45,7 +69,7 @@ function Profile() {
               </div>
 
               <h1 className="text-4xl font-bold">
-                {user.name}
+                {user.fullName}
               </h1>
 
               <p className="mt-2 text-sky-100">
@@ -54,7 +78,7 @@ function Profile() {
             </div>
           </div>
 
-          <Button>
+          <Button onClick={() => setIsEditOpen(true)}>
             <Settings size={18} />
             Edit Profile
           </Button>
@@ -185,6 +209,13 @@ function Profile() {
         </div>
 
       </section>
+
+      <EditProfileModal
+          isOpen={isEditOpen}
+          onClose={() => setIsEditOpen(false)}
+          user={user}
+          onProfileUpdated={loadProfile}
+      />
     </DashboardLayout>
   );
 }

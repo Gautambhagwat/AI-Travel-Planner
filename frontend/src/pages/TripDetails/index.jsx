@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import Button from "../../components/common/Button";
@@ -9,214 +9,282 @@ import TripSummary from "../../components/itinerary/TripSummary";
 import BudgetCard from "../../components/itinerary/BudgetCard";
 import HotelCard from "../../components/itinerary/HotelCard";
 import TransportCard from "../../components/itinerary/TransportCard";
-import DayCard from "../../components/itinerary/DayCard";
 import EmptyItinerary from "../../components/itinerary/EmptyItinerary";
 
-import useItinerary from "../../hooks/useItinerary";
-
 import {
-  deleteSavedTrip,
-  duplicateTrip,
-  getSavedTrip,
-  saveTrip,
+  getTripById,
+  deleteTrip,
 } from "../../services/tripService";
 
+
 function TripDetails() {
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { id } = useParams();
+
   const navigate = useNavigate();
 
-  const { itinerary, setItinerary } = useItinerary();
 
-  const savedTrip = id ? getSavedTrip(id) : null;
+  const [trip, setTrip] = useState(null);
 
-  const trip = savedTrip || itinerary;
 
-  const handleSave = () => {
-    const saved = saveTrip(trip);
 
-    setItinerary(saved);
+  useEffect(() => {
 
-    navigate(`/trip-details/${saved.id}`, {
-      replace: true,
-    });
+    async function loadTrip() {
+
+      try {
+
+        const response =
+            await getTripById(id);
+
+
+        console.log(
+            "Trip details:",
+            response
+        );
+
+
+        setTrip(response);
+
+
+      } catch(error) {
+
+        console.error(
+            "Failed loading trip",
+            error
+        );
+
+      }
+
+    }
+
+
+    if(id){
+      loadTrip();
+    }
+
+
+  },[id]);
+
+
+
+
+  const handleDelete = async () => {
+
+    try {
+
+      await deleteTrip(trip.id);
+
+
+      setIsDeleteModalOpen(false);
+
+
+      navigate("/saved-trips");
+
+
+    } catch(error){
+
+      console.error(error);
+
+    }
+
   };
 
-  const handleDuplicate = () => {
-    const duplicatedTrip = duplicateTrip(trip.id);
 
-    setItinerary(duplicatedTrip);
 
-    navigate(`/trip-details/${duplicatedTrip.id}`);
-  };
 
-  const handleDelete = () => {
-    deleteSavedTrip(trip.id);
+  if(!trip){
 
-    setItinerary(null);
-
-    setIsDeleteModalOpen(false);
-
-    navigate("/saved-trips");
-  };
-
-  if (!trip) {
     return (
-      <DashboardLayout>
-        <EmptyItinerary />
-      </DashboardLayout>
+
+        <DashboardLayout>
+
+          <EmptyItinerary/>
+
+        </DashboardLayout>
+
     );
+
   }
 
+
+
+
   return (
-    <DashboardLayout>
-      {/* Hero */}
-      <TripSummary trip={trip} />
 
-      {/* Action Bar */}
-      <section className="mb-10 rounded-3xl border border-secondary-200 bg-white p-5 shadow-card">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <DashboardLayout>
 
-          <div>
-            <h2 className="text-xl font-semibold text-secondary-900">
-              Manage Trip
-            </h2>
 
-            <p className="mt-1 text-sm text-secondary-500">
-              Save, duplicate or remove this itinerary.
-            </p>
-          </div>
+        {/* Hero */}
 
-          <div className="flex flex-wrap gap-3">
-            {!savedTrip ? (
-              <Button onClick={handleSave}>
-                Save Trip
-              </Button>
-            ) : (
-              <>
-                <Button
-                  variant="secondary"
-                  onClick={handleDuplicate}
-                >
-                  Duplicate Trip
-                </Button>
-
-                <Button
-                  variant="danger"
-                  onClick={() =>
-                    setIsDeleteModalOpen(true)
-                  }
-                >
-                  Delete Trip
-                </Button>
-              </>
-            )}
-          </div>
-
-        </div>
-      </section>
-
-      {/* Summary Cards */}
-
-      <section className="mb-10">
-        <div className="grid gap-6 lg:grid-cols-2">
-
-          <BudgetCard
-            totalCost={trip.totalCost}
-            budgetLimit={trip.budgetLimit}
-          />
-
-          <HotelCard
-            hotelName={trip.hotelName}
-            accommodation={trip.accommodation}
-          />
-
-        </div>
-      </section>
-
-      {/* Transport */}
-
-      <section className="mb-10">
-        <TransportCard
-          transport={trip.transport}
+        <TripSummary
+            trip={trip}
         />
-      </section>
 
-      {/* Itinerary */}
 
-      <section className="space-y-8">
 
-        <div className="flex items-end justify-between">
+        {/* Manage Trip */}
 
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-primary-600">
-              Daily Plan
-            </p>
+        <section className="mb-10 rounded-3xl border border-secondary-200 bg-white p-5 shadow-card">
 
-            <h2 className="mt-2 text-3xl font-bold text-secondary-900">
-              Your Journey
-            </h2>
 
-            <p className="mt-2 text-secondary-500">
-              Follow your personalized AI-generated itinerary day by day.
-            </p>
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+
+
+            <div>
+
+              <h2 className="text-xl font-semibold">
+                Manage Trip
+              </h2>
+
+
+              <p className="text-sm text-secondary-500">
+                View or remove your saved trip.
+              </p>
+
+
+            </div>
+
+
+
+            <Button
+                variant="danger"
+                onClick={() =>
+                    setIsDeleteModalOpen(true)
+                }
+            >
+              Delete Trip
+            </Button>
+
+
           </div>
 
-        </div>
 
-        <div className="space-y-8">
-          {trip.days.map((day) => (
-            <DayCard
-              key={day.day}
-              day={day}
+        </section>
+
+
+
+
+
+        {/* Summary Cards */}
+
+
+        <section className="mb-10">
+
+
+          <div className="grid gap-6 lg:grid-cols-2">
+
+
+            <BudgetCard
+                totalCost={trip.totalPrice}
             />
-          ))}
-        </div>
 
-      </section>
 
-      {/* Delete Modal */}
 
-      <Modal
-        isOpen={isDeleteModalOpen}
-        title="Delete saved trip?"
-        onClose={() =>
-          setIsDeleteModalOpen(false)
-        }
-      >
-        <p className="text-secondary-600">
-          This will permanently remove
-          <span className="font-semibold">
-            {" "}
-            "{trip.tripTitle}"
-          </span>{" "}
-          from your saved trips.
-        </p>
+            <HotelCard/>
 
-        <div className="mt-8 flex justify-end gap-3">
+          </div>
 
-          <Button
-            variant="secondary"
-            onClick={() =>
-              setIsDeleteModalOpen(false)
+
+        </section>
+
+
+
+
+
+        {/* Transport */}
+
+
+        <section className="mb-10">
+
+          <TransportCard/>
+
+        </section>
+
+
+
+
+
+
+        {/* Delete Modal */}
+
+
+        <Modal
+
+            isOpen={isDeleteModalOpen}
+
+            title="Delete trip?"
+
+            onClose={() =>
+                setIsDeleteModalOpen(false)
             }
-          >
-            Cancel
-          </Button>
 
-          <Button
-            variant="danger"
-            onClick={handleDelete}
-          >
-            Delete Trip
-          </Button>
+        >
 
-        </div>
+          <p className="text-secondary-600">
 
-      </Modal>
-    </DashboardLayout>
+            Are you sure you want to delete
+
+            <span className="font-semibold">
+
+            {" "}
+              {trip.tripName}
+
+          </span>
+
+            ?
+
+          </p>
+
+
+
+          <div className="mt-8 flex justify-end gap-3">
+
+
+            <Button
+
+                variant="secondary"
+
+                onClick={() =>
+                    setIsDeleteModalOpen(false)
+                }
+
+            >
+
+              Cancel
+
+            </Button>
+
+
+
+            <Button
+
+                variant="danger"
+
+                onClick={handleDelete}
+
+            >
+
+              Delete
+
+            </Button>
+
+
+
+          </div>
+
+
+        </Modal>
+
+
+
+      </DashboardLayout>
+
   );
+
 }
+
 
 export default TripDetails;

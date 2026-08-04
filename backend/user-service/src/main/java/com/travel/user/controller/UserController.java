@@ -44,4 +44,21 @@ public class UserController {
 
         return "User deleted successfully";
     }
+
+    @GetMapping("/email/{email}")
+    public UserResponse getUserByEmail(
+            @PathVariable String email
+    ) {
+
+        return userService.getUserByEmail(email);
+
+    }
+
+    @PutMapping("/email/{email}")
+    public UserResponse updateUserByEmail(
+            @PathVariable String email,
+            @RequestBody UserRequest request) {
+
+        return userService.updateUserByEmail(email, request);
+    }
 }

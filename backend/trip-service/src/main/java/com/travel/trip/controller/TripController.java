@@ -21,6 +21,13 @@ public class TripController {
         return tripService.getAllTrips();
     }
 
+    @GetMapping("/user/{userId}")
+    public List<TripResponse> getTripsByUserId(
+            @PathVariable Long userId) {
+
+        return tripService.getTripsByUserId(userId);
+    }
+
     @GetMapping("/{id}")
     public TripResponse getTripById(@PathVariable Long id) {
         return tripService.getTripById(id);

@@ -6,70 +6,184 @@ import StatCard from "../../components/dashboard/StatCard";
 import QuickActions from "../../components/dashboard/QuickActions";
 import RecentTrips from "../../components/dashboard/RecentTrips";
 import AIRecommendations from "../../components/dashboard/AIRecommendations";
-import { getSavedTrips } from "../../services/tripService";
+
+import { getTripsByUserId } from "../../services/tripService";
+
 
 function Dashboard() {
-  const [trips, setTrips] = useState([]);
 
-  useEffect(() => {
-    setTrips(getSavedTrips());
-  }, []);
+    const [trips, setTrips] = useState([]);
 
-  const totalEstimatedCost = trips.reduce(
-    (total, trip) => total + trip.totalCost,
-    0
-  );
 
-  const destinations = new Set(
-    trips.map((trip) => trip.destination)
-  ).size;
+    useEffect(() => {
 
-  const formattedCost = new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(totalEstimatedCost);
+        async function loadTrips() {
 
-  return (
-    <DashboardLayout>
+            try {
 
-      <WelcomeBanner />
+                const loggedInUser =
+                    JSON.parse(
+                        localStorage.getItem("user")
+                    );
 
-      <section className="my-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
 
-        <StatCard
-          title="Saved Trips"
-          value={trips.length}
-        />
+                if (!loggedInUser?.id) {
 
-        <StatCard
-          title="Destinations"
-          value={destinations}
-        />
+                    console.log(
+                        "User not logged in"
+                    );
 
-        <StatCard
-          title="Estimated Budget"
-          value={formattedCost}
-        />
+                    return;
 
-      </section>
+                }
 
-      <section className="mb-10">
 
-        <QuickActions />
+                const response =
+                    await getTripsByUserId(
+                        loggedInUser.id
+                    );
 
-      </section>
 
-      <section className="grid gap-6 lg:grid-cols-2">
+                console.log(
+                    "Trips from backend:",
+                    response
+                );
 
-        <RecentTrips trips={trips} />
 
-        <AIRecommendations />
+                setTrips(response);
 
-      </section>
 
-    </DashboardLayout>
-  );
+            } catch(error) {
+
+                console.error(
+                    "Failed to fetch trips:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        loadTrips();
+
+
+    }, []);
+
+
+
+    const totalEstimatedCost =
+        trips.reduce(
+            (total, trip) =>
+                total +
+                Number(trip.totalPrice || 0),
+
+            0
+        );
+
+
+
+    const destinations =
+        new Set(
+            trips.map(
+                (trip) =>
+                    trip.destinationId
+            )
+        ).size;
+
+
+
+    const formattedCost =
+        new Intl.NumberFormat(
+            "en-IN",
+            {
+                style: "currency",
+                currency: "INR",
+                maximumFractionDigits: 0,
+            }
+        ).format(totalEstimatedCost);
+
+
+
+    return (
+
+        <DashboardLayout>
+
+
+            <WelcomeBanner />
+
+
+
+            <section className="my-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+
+
+                <StatCard
+
+                    title="Total Trips"
+
+                    value={trips.length}
+
+                />
+
+
+
+                <StatCard
+
+                    title="Destinations"
+
+                    value={destinations}
+
+                />
+
+
+
+                <StatCard
+
+                    title="Estimated Budget"
+
+                    value={formattedCost}
+
+                />
+
+
+            </section>
+
+
+
+
+            <section className="mb-10">
+
+
+                <QuickActions />
+
+
+            </section>
+
+
+
+
+            <section className="grid gap-6 lg:grid-cols-2">
+
+
+                <RecentTrips
+
+                    trips={trips}
+
+                />
+
+
+
+                <AIRecommendations />
+
+
+            </section>
+
+
+        </DashboardLayout>
+
+    );
+
 }
+
 
 export default Dashboard;

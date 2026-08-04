@@ -4,7 +4,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-function BudgetCard({ totalCost, budgetLimit }) {
+function BudgetCard({ totalCost }) {
   const formatCurrency = (amount) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -12,12 +12,9 @@ function BudgetCard({ totalCost, budgetLimit }) {
       maximumFractionDigits: 0,
     }).format(amount);
 
-  const percentage =
-    budgetLimit > 0
-      ? Math.min((totalCost / budgetLimit) * 100, 100)
-      : 0;
+  const percentage = 100;
 
-  const remaining = Math.max(budgetLimit - totalCost, 0);
+  const remaining = 0;
 
   return (
     <div className="rounded-3xl border border-secondary-200 bg-white p-7 shadow-card">
@@ -75,7 +72,7 @@ function BudgetCard({ totalCost, budgetLimit }) {
           </div>
 
           <p className="font-bold text-secondary-900">
-            {formatCurrency(budgetLimit)}
+            {formatCurrency(totalCost)}
           </p>
         </div>
 

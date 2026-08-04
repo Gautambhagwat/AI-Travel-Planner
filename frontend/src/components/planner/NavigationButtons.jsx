@@ -8,6 +8,7 @@ import usePlanner from "../../hooks/usePlanner";
 import useItinerary from "../../hooks/useItinerary";
 
 import { generateTrip } from "../../services/plannerService";
+import { createTrip } from "../../services/tripService";
 
 function NavigationButtons() {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -25,19 +26,91 @@ function NavigationButtons() {
   } = usePlanner();
 
   const handleGenerate = async () => {
+
     if (!validateStep(8)) return;
+
 
     setIsGenerating(true);
 
+
     try {
+
+      // Generate AI itinerary
       const itinerary = await generateTrip(tripData);
+
 
       setItinerary(itinerary);
 
-      navigate("/trip-details");
+
+
+      // Get logged-in user
+      const user = JSON.parse(
+          localStorage.getItem("user")
+      );
+
+
+
+      // Save trip into database
+      const tripPayload = {
+
+        userId: user.id,
+
+        destinationId: null,
+
+        tripName:
+            `${tripData.destination} Trip`,
+
+        startDate:
+        tripData.startDate,
+
+        endDate:
+            tripData.endDate,
+
+        numberOfPeople:
+        tripData.travelers,
+
+        totalPrice:
+            Number(tripData.budget),
+
+        status:
+            "PLANNED"
+
+      };
+
+
+
+      const savedTrip = await createTrip(tripPayload);
+
+
+      console.log(
+          "Trip saved:",
+          savedTrip
+      );
+
+      setItinerary({
+        ...itinerary,
+        tripId: savedTrip.id
+      });
+
+
+      navigate(
+          `/trip-details/${savedTrip.id}`
+      );
+
+
+    }  catch(error){
+
+      console.error(
+          "Trip generation failed:",
+          error
+      );
+
     } finally {
+
       setIsGenerating(false);
+
     }
+
   };
 
   return (

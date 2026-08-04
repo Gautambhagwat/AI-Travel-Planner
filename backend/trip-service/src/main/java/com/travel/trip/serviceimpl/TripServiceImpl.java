@@ -97,4 +97,13 @@ public class TripServiceImpl implements TripService {
 
         return response;
     }
+
+    @Override
+    public List<TripResponse> getTripsByUserId(Long userId) {
+
+        return tripRepository.findByUserId(userId)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
 }
