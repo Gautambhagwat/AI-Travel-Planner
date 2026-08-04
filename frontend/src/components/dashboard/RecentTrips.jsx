@@ -8,11 +8,11 @@ import {
 } from "lucide-react";
 
 const destinationImages = {
-  Goa: "https://picsum.photos/1200/800?random=11",
-  Manali: "https://picsum.photos/1200/800?random=12",
-  Jaipur: "https://picsum.photos/1200/800?random=13",
-  Ladakh: "https://picsum.photos/1200/800?random=14",
-  Kerala: "https://picsum.photos/1200/800?random=15",
+  Goa: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800",
+  Manali: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800",
+  Jaipur: "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800",
+  Ladakh: "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?w=800",
+  Kerala: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800",
 };
 
 function RecentTrips({ trips }) {
@@ -74,7 +74,7 @@ function RecentTrips({ trips }) {
             {trips.slice(0, 3).map((trip) => {
               const image =
                 destinationImages[trip.destination] ||
-                "https://picsum.photos/1200/800?random=20";
+                "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800";
 
               return (
                 <article

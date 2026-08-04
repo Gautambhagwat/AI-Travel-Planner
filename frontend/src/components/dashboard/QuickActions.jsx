@@ -61,27 +61,21 @@ function QuickActions() {
               key={action.title}
               type="button"
               onClick={() => navigate(action.route)}
-              className="group flex flex-col justify-between rounded-2xl border border-secondary-200/80 bg-white p-5 text-left shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              className="group flex h-52 flex-col items-center justify-center rounded-2xl border border-secondary-200/80 bg-white p-6 text-center shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary-200 hover:shadow-card-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
             >
-              <div>
-                <div
-                  className={`mb-3 flex h-11 w-11 items-center justify-center rounded-xl ${action.color}`}
-                >
-                  <Icon size={20} aria-hidden="true" />
-                </div>
-
-                <h3 className="text-base font-bold text-secondary-900">
-                  {action.title}
-                </h3>
-
-                <p className="mt-1 text-xs leading-relaxed text-secondary-500 sm:text-sm">
-                  {action.description}
-                </p>
+              <div
+                className={`mb-5 flex h-14 w-14 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110 ${action.color}`}
+              >
+                <Icon size={24} aria-hidden="true" />
               </div>
 
-              <div className="mt-4 flex items-center text-xs font-bold text-primary-600 transition-transform group-hover:translate-x-1">
-                Get Started →
-              </div>
+              <h3 className="text-base font-semibold text-secondary-900">
+                {action.title}
+              </h3>
+
+              <p className="mt-2 max-w-[220px] text-sm leading-relaxed text-secondary-500">
+                {action.description}
+              </p>
             </button>
           );
         })}

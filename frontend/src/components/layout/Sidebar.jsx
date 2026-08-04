@@ -23,7 +23,7 @@ const menuItems = [
     icon: Compass,
   },
   {
-    name: "Saved Trips",
+    name: "Recent Trips",
     path: "/saved-trips",
     icon: Bookmark,
   },
@@ -83,34 +83,14 @@ function Sidebar() {
 
       </nav>
 
-      {/* Bottom CTA Card */}
-
       <div className="hidden border-t border-secondary-100 p-6 lg:block">
-
-        <div className="rounded-2xl bg-gradient-to-br from-primary-50 via-sky-50 to-primary-100/50 p-5 ring-1 ring-primary-100 shadow-sm">
-
-          <Map className="mb-3 text-primary-600" size={24} aria-hidden="true" />
-
-          <h3 className="font-bold text-secondary-900">
-            Ready to travel?
-          </h3>
-
-          <p className="mt-1 text-xs text-secondary-500 leading-relaxed">
-            Plan your next adventure with AI.
-          </p>
-
-          <button
-            onClick={() => navigate("/planner")}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 py-2.5 text-sm font-bold text-white shadow-md shadow-primary-500/25 transition-all duration-200 hover:bg-primary-700 hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
-            aria-label="Plan your trip with AI Planner"
-          >
-            Plan Your Trip
-            <ArrowRight size={15} aria-hidden="true" />
-          </button>
-
-        </div>
-
-      </div>
+  <div className="flex items-center gap-3 text-secondary-500">
+    <Map className="text-primary-500" size={18} />
+    <span className="text-sm">
+      Personalized travel recommendations.
+    </span>
+  </div>
+</div>
 
     </aside>
   );

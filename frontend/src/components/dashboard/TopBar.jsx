@@ -27,7 +27,6 @@ function TopBar() {
             />
 
             <kbd className="hidden rounded border border-secondary-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-secondary-400 shadow-xs xl:inline-block">
-              ⌘K
             </kbd>
 
           </div>
@@ -37,23 +36,6 @@ function TopBar() {
         {/* Right Side */}
 
         <div className="ml-auto flex items-center gap-3 sm:gap-4">
-
-          <button
-            type="button"
-            aria-label="View notifications"
-            className="relative rounded-xl bg-secondary-100 p-2.5 transition-all duration-200 hover:bg-primary-50 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
-          >
-
-            <Bell
-              size={18}
-              className="text-secondary-700 transition-colors hover:text-primary-600"
-              aria-hidden="true"
-            />
-
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-error-500 ring-2 ring-white" />
-
-          </button>
-
           {/* Profile avatar with dropdown */}
           <ProfileDropdown />
 

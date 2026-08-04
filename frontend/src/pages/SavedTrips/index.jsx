@@ -54,11 +54,11 @@ function SavedTrips() {
             </div>
 
             <h1 className="text-3xl font-bold sm:text-4xl">
-              Saved Trips
+              Recent Trips
             </h1>
 
             <p className="mt-3 max-w-2xl text-sky-100">
-              Access your AI-generated itineraries anytime and continue planning
+              Access your Itineraries anytime and continue planning
               your next adventure.
             </p>
           </div>

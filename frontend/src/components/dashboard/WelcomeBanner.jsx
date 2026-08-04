@@ -68,7 +68,7 @@ function WelcomeBanner() {
                 className="flex w-full items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
                 <Bookmark size={18} aria-hidden="true" />
-                Saved Trips
+                Your Recent Trips
               </Button>
             </Link>
 

@@ -5,7 +5,6 @@ import WelcomeBanner from "../../components/dashboard/WelcomeBanner";
 import StatCard from "../../components/dashboard/StatCard";
 import QuickActions from "../../components/dashboard/QuickActions";
 import RecentTrips from "../../components/dashboard/RecentTrips";
-import AIRecommendations from "../../components/dashboard/AIRecommendations";
 import { getSavedTrips } from "../../services/tripService";
 
 function Dashboard() {
@@ -41,7 +40,7 @@ function Dashboard() {
       >
 
         <StatCard
-          title="Saved Trips"
+          title="Recent Trips"
           value={trips.length}
         />
 
@@ -59,14 +58,9 @@ function Dashboard() {
 
       <QuickActions />
 
-      <section
-        aria-label="Trip Activity and Insights"
-        className="grid gap-5 lg:grid-cols-2"
-      >
+      <section aria-label="Trip Activity and Insights">
 
         <RecentTrips trips={trips} />
-
-        <AIRecommendations />
 
       </section>
 
