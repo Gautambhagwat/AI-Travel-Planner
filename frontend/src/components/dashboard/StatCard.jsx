@@ -26,39 +26,39 @@ function StatCard({ title, value }) {
     colorMap[key] || "bg-secondary-100 text-secondary-700";
 
   return (
-    <div className="group flex flex-col justify-between rounded-2xl border border-secondary-200 bg-white p-4 shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-card-hover sm:rounded-3xl lg:p-5">
+    <div className="group flex flex-col justify-between rounded-2xl border border-secondary-200/80 bg-white p-5 shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md sm:rounded-3xl">
 
       <div>
         {/* Top Row */}
         <div className="flex items-center justify-between">
 
           <div
-            className={`flex h-10 w-10 items-center justify-center rounded-xl lg:h-11 lg:w-11 ${colors}`}
+            className={`flex h-11 w-11 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105 ${colors}`}
           >
-            <Icon size={20} />
+            <Icon size={20} aria-hidden="true" />
           </div>
 
-          <div className="flex items-center gap-1 rounded-full bg-success-50 px-2.5 py-0.5 text-xs font-semibold text-success-700">
-            <TrendingUp size={12} />
+          <div className="flex items-center gap-1 rounded-full bg-success-50 px-2.5 py-1 text-[11px] font-bold text-success-700">
+            <TrendingUp size={12} aria-hidden="true" />
             Active
           </div>
 
         </div>
 
         {/* Title */}
-        <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-secondary-500">
+        <p className="mt-3.5 text-xs font-bold uppercase tracking-wider text-secondary-400">
           {title}
         </p>
 
         {/* Value */}
-        <h3 className="mt-1 text-2xl font-bold text-secondary-900 lg:text-3xl">
+        <h3 className="mt-1 text-2xl font-extrabold text-secondary-900 lg:text-3xl">
           {value}
         </h3>
       </div>
 
       {/* Footer */}
-      <div className="mt-3 border-t border-secondary-100 pt-2.5">
-        <p className="text-xs text-secondary-400">
+      <div className="mt-4 border-t border-secondary-100 pt-3">
+        <p className="text-[11px] font-medium text-secondary-400">
           Updated just now
         </p>
       </div>

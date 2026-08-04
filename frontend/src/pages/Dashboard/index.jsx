@@ -35,7 +35,10 @@ function Dashboard() {
 
       <WelcomeBanner />
 
-      <section className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <section
+        aria-label="Dashboard Statistics"
+        className="mb-6 grid gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3"
+      >
 
         <StatCard
           title="Saved Trips"
@@ -56,7 +59,10 @@ function Dashboard() {
 
       <QuickActions />
 
-      <section className="grid gap-5 lg:grid-cols-2">
+      <section
+        aria-label="Trip Activity and Insights"
+        className="grid gap-5 lg:grid-cols-2"
+      >
 
         <RecentTrips trips={trips} />
 

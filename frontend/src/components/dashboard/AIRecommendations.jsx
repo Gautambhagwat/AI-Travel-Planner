@@ -32,13 +32,13 @@ function AIRecommendations() {
   ];
 
   return (
-    <section className="flex flex-col justify-between rounded-2xl border border-secondary-200 bg-white p-4 shadow-card sm:rounded-3xl lg:p-5">
+    <section className="flex flex-col justify-between rounded-2xl border border-secondary-200/80 bg-white p-5 shadow-card sm:rounded-3xl lg:p-6">
 
       <div>
-        <div className="mb-4 flex items-center gap-3">
+        <div className="mb-5 flex items-center gap-3">
 
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-100 text-primary-700 lg:h-10 lg:w-10">
-            <Sparkles size={18} />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100 text-primary-700">
+            <Sparkles size={18} aria-hidden="true" />
           </div>
 
           <div>
@@ -61,20 +61,20 @@ function AIRecommendations() {
             return (
               <div
                 key={item.title}
-                className="group rounded-xl border border-secondary-200 p-3 transition-all duration-300 hover:border-primary-200 hover:bg-primary-50 lg:p-3.5"
+                className="group rounded-2xl border border-secondary-200/80 p-3.5 transition-all duration-200 hover:border-primary-200 hover:bg-primary-50/50"
               >
 
                 <div className="flex gap-3">
 
                   <div
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${item.color}`}
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.color}`}
                   >
-                    <Icon size={18} />
+                    <Icon size={18} aria-hidden="true" />
                   </div>
 
                   <div className="min-w-0 flex-1">
 
-                    <h3 className="text-sm font-semibold text-secondary-900">
+                    <h3 className="text-sm font-bold text-secondary-900">
                       {item.title}
                     </h3>
 
@@ -93,30 +93,31 @@ function AIRecommendations() {
         </div>
       </div>
 
-      <div className="mt-4 rounded-xl bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 p-3.5 text-white lg:mt-5 lg:p-4">
+      <div className="mt-5 rounded-2xl bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 p-4 text-white shadow-md">
 
         <div className="flex items-center gap-2">
 
-          <Sparkles size={16} />
+          <Sparkles size={16} className="text-amber-300" aria-hidden="true" />
 
-          <h3 className="text-sm font-semibold lg:text-base">
+          <h3 className="text-sm font-bold lg:text-base">
             AI Suggestion
           </h3>
 
         </div>
 
-        <p className="mt-1.5 text-xs leading-relaxed text-primary-50">
+        <p className="mt-2 text-xs leading-relaxed text-primary-50">
           Your recent trips suggest you enjoy beach destinations and
           relaxed vacations. Consider planning a 5–7 day trip to Kerala
           or the Andaman Islands during the winter season.
         </p>
 
         <button
-          className="mt-3 flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-2 text-xs font-semibold text-primary-700 transition hover:scale-105"
+          type="button"
+          className="mt-4 flex items-center gap-1.5 rounded-xl bg-white px-4 py-2 text-xs font-bold text-primary-700 shadow-xs transition-all duration-200 hover:bg-primary-50 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
-          Generate Full Itinerary
+          <span>Generate Full Itinerary</span>
 
-          <ArrowRight size={15} />
+          <ArrowRight size={14} aria-hidden="true" />
         </button>
 
       </div>

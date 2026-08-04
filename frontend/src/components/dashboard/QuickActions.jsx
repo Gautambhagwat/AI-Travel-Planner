@@ -47,7 +47,7 @@ function QuickActions() {
           Quick Actions
         </h2>
 
-        <p className="mt-1 text-xs text-secondary-500 sm:text-sm">
+        <p className="mt-0.5 text-xs text-secondary-500 sm:text-sm">
           Start planning your next adventure in just one click.
         </p>
       </div>
@@ -59,26 +59,27 @@ function QuickActions() {
           return (
             <button
               key={action.title}
+              type="button"
               onClick={() => navigate(action.route)}
-              className="group flex flex-col justify-between rounded-2xl border border-secondary-200 bg-white p-4 text-left shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-card-hover lg:p-5"
+              className="group flex flex-col justify-between rounded-2xl border border-secondary-200/80 bg-white p-5 text-left shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
             >
               <div>
                 <div
-                  className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl lg:h-11 lg:w-11 ${action.color}`}
+                  className={`mb-3 flex h-11 w-11 items-center justify-center rounded-xl ${action.color}`}
                 >
-                  <Icon size={20} />
+                  <Icon size={20} aria-hidden="true" />
                 </div>
 
-                <h3 className="text-base font-semibold text-secondary-900 lg:text-lg">
+                <h3 className="text-base font-bold text-secondary-900">
                   {action.title}
                 </h3>
 
-                <p className="mt-1.5 text-xs leading-relaxed text-secondary-500 sm:text-sm">
+                <p className="mt-1 text-xs leading-relaxed text-secondary-500 sm:text-sm">
                   {action.description}
                 </p>
               </div>
 
-              <div className="mt-3 flex items-center text-xs font-semibold text-primary-600 transition group-hover:translate-x-1 sm:text-sm">
+              <div className="mt-4 flex items-center text-xs font-bold text-primary-600 transition-transform group-hover:translate-x-1">
                 Get Started →
               </div>
             </button>
