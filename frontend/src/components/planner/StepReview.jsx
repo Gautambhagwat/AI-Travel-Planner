@@ -23,14 +23,14 @@ function ReviewRow({ icon: Icon, label, value, highlight = false, emoji }) {
 
   return (
     <div
-      className={`flex items-start gap-3 rounded-xl border p-4 transition-all duration-200 hover:shadow-sm ${
+      className={`flex items-start gap-3 rounded-2xl border p-4 transition-all duration-200 hover:shadow-xs ${
         highlight
-          ? "border-primary-200 bg-primary-50"
-          : "border-secondary-100 bg-white hover:border-secondary-200"
+          ? "border-primary-200/80 bg-primary-50/70"
+          : "border-secondary-200/80 bg-white hover:border-secondary-300"
       }`}
     >
       <div
-        className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
           highlight
             ? "bg-primary-100 text-primary-700"
             : "bg-secondary-100 text-secondary-600"
@@ -43,10 +43,10 @@ function ReviewRow({ icon: Icon, label, value, highlight = false, emoji }) {
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[11px] font-bold uppercase tracking-wide text-secondary-400">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-secondary-400">
           {label}
         </p>
-        <p className={`mt-0.5 text-base font-semibold break-words ${
+        <p className={`mt-0.5 text-sm font-bold break-words ${
           highlight ? "text-primary-800" : "text-secondary-900"
         }`}>
           {value}
@@ -59,10 +59,10 @@ function ReviewRow({ icon: Icon, label, value, highlight = false, emoji }) {
 function SectionDivider({ title, icon: Icon }) {
   return (
     <div className="flex items-center gap-3 mt-6 mb-4 first:mt-0">
-      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-secondary-100 text-secondary-500">
-        <Icon size={13} aria-hidden="true" />
+      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-50 text-primary-600 border border-primary-100">
+        <Icon size={14} aria-hidden="true" />
       </div>
-      <p className="text-xs font-bold uppercase tracking-widest text-secondary-400">
+      <p className="text-xs font-extrabold uppercase tracking-widest text-secondary-400">
         {title}
       </p>
       <div className="flex-1 h-px bg-secondary-100" />
@@ -96,9 +96,9 @@ function StepReview() {
       />
 
       {/* ── Destination hero banner ── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-600 via-primary-700 to-sky-800 p-6 text-white shadow-lg">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-600 via-primary-700 to-sky-800 p-6 text-white shadow-xl">
         {/* Decorative bg pattern */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="absolute inset-0 opacity-10 pointer-events-none" aria-hidden="true">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -111,27 +111,27 @@ function StepReview() {
 
         <div className="relative flex items-start justify-between gap-4">
           <div>
-            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm">
-              <MapPin size={10} aria-hidden="true" />
+            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md">
+              <MapPin size={11} aria-hidden="true" />
               Destination
             </div>
             <h2 className="text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">
               {tripData.destination || "Not set"}
             </h2>
-            <p className="mt-1 text-sm text-primary-200">
+            <p className="mt-1.5 text-xs text-primary-100 sm:text-sm">
               {tripDuration} {tripDuration === 1 ? "day" : "days"} ·{" "}
               {tripData.travelers} {tripData.travelers === 1 ? "traveler" : "travelers"}
               {tripData.travelStyle && ` · ${tripData.travelStyle}`}
             </p>
           </div>
-          <div className="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm text-2xl" aria-hidden="true">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md text-2xl" aria-hidden="true">
             🗺️
           </div>
         </div>
       </div>
 
       {/* ── Trip details grid ── */}
-      <div className="rounded-2xl border border-secondary-200 bg-white p-5 shadow-sm sm:p-6">
+      <div className="rounded-2xl border border-secondary-200/80 bg-white p-5 shadow-card sm:p-6">
         <SectionDivider title="Trip Details" icon={CalendarDays} />
 
         <div className="grid gap-3 sm:grid-cols-2">
@@ -204,7 +204,7 @@ function StepReview() {
       </div>
 
       {/* ── What AI will generate ── */}
-      <div className="rounded-2xl border border-primary-200 bg-gradient-to-br from-primary-50 via-sky-50 to-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-primary-200/80 bg-gradient-to-br from-primary-50/70 via-sky-50/40 to-white p-6 shadow-sm">
         <div className="mb-5 flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100 text-primary-700">
             <Sparkles size={20} aria-hidden="true" />
@@ -232,13 +232,13 @@ function StepReview() {
           ].map((item) => (
             <div
               key={item.text}
-              className="flex items-center gap-3 rounded-xl border border-white bg-white/70 px-3.5 py-2.5 shadow-sm backdrop-blur-sm"
+              className="flex items-center gap-3 rounded-xl border border-white bg-white/80 px-3.5 py-2.5 shadow-xs backdrop-blur-xs"
             >
               <span className="text-base" aria-hidden="true">{item.emoji}</span>
-              <span className="text-sm font-medium text-secondary-700">{item.text}</span>
+              <span className="text-xs font-semibold text-secondary-800">{item.text}</span>
               <CheckCircle
                 size={14}
-                className="ml-auto flex-shrink-0 text-emerald-500"
+                className="ml-auto shrink-0 text-emerald-500"
                 aria-hidden="true"
               />
             </div>
@@ -246,12 +246,12 @@ function StepReview() {
         </div>
 
         {/* Time estimate */}
-        <div className="mt-5 flex items-center gap-3 rounded-xl border border-primary-100 bg-white px-4 py-3.5">
-          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-600">
+        <div className="mt-5 flex items-center gap-3 rounded-xl border border-primary-100 bg-white p-4">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-600">
             <Zap size={15} aria-hidden="true" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-secondary-800">
+            <p className="text-xs font-bold text-secondary-800 sm:text-sm">
               Generation time: <span className="text-primary-700">~5–10 seconds</span>
             </p>
             <p className="mt-0.5 text-xs text-secondary-500">

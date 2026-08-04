@@ -75,20 +75,20 @@ function TripDetails() {
       <TripSummary trip={trip} />
 
       {/* Action Bar */}
-      <section className="mb-8 rounded-2xl border border-secondary-200 bg-white p-4 shadow-card sm:mb-10 sm:rounded-3xl sm:p-5">
+      <section className="mb-8 rounded-2xl border border-secondary-200/80 bg-white p-5 shadow-card sm:mb-10 sm:rounded-3xl sm:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
           <div>
-            <h2 className="text-xl font-semibold text-secondary-900">
+            <h2 className="text-lg font-bold text-secondary-900 sm:text-xl">
               Manage Trip
             </h2>
 
-            <p className="mt-1 text-sm text-secondary-500">
+            <p className="mt-0.5 text-xs text-secondary-500 sm:text-sm">
               Save, duplicate or remove this itinerary.
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
             {!savedTrip ? (
               <Button onClick={handleSave}>
                 Save Trip
@@ -121,7 +121,7 @@ function TripDetails() {
 
       {/* Summary Cards */}
 
-      <section className="mb-10">
+      <section className="mb-8 sm:mb-10">
         <div className="grid gap-6 lg:grid-cols-2">
 
           <BudgetCard
@@ -139,7 +139,7 @@ function TripDetails() {
 
       {/* Transport */}
 
-      <section className="mb-10">
+      <section className="mb-8 sm:mb-10">
         <TransportCard
           transport={trip.transport}
         />
@@ -149,18 +149,18 @@ function TripDetails() {
 
       <section className="space-y-8">
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between border-b border-secondary-100 pb-4">
 
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-primary-600">
+            <p className="text-xs font-extrabold uppercase tracking-widest text-primary-600">
               Daily Plan
             </p>
 
-            <h2 className="mt-2 text-2xl font-bold text-secondary-900 sm:text-3xl">
+            <h2 className="mt-1.5 text-2xl font-extrabold text-secondary-900 sm:text-3xl">
               Your Journey
             </h2>
 
-            <p className="mt-2 text-secondary-500">
+            <p className="mt-1 text-xs text-secondary-500 sm:text-sm">
               Follow your personalized AI-generated itinerary day by day.
             </p>
           </div>
@@ -187,16 +187,16 @@ function TripDetails() {
           setIsDeleteModalOpen(false)
         }
       >
-        <p className="text-secondary-600">
+        <p className="text-sm text-secondary-600">
           This will permanently remove
-          <span className="font-semibold">
+          <span className="font-bold text-secondary-900">
             {" "}
             "{trip.tripTitle}"
           </span>{" "}
           from your saved trips.
         </p>
 
-        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <div className="mt-8 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
 
           <Button
             variant="secondary"
