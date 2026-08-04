@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, Loader2 } from "lucide-react";
 
 import Button from "../common/Button";
 import PasswordInput from "./PasswordInput";
@@ -39,12 +39,13 @@ function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6"
+      className="space-y-5"
+      noValidate
     >
       {/* Email */}
 
       <div>
-        <label className="mb-2 block text-sm font-semibold text-secondary-700">
+        <label htmlFor="login-email" className="mb-2 block text-sm font-semibold text-secondary-700">
           Email Address
         </label>
 
@@ -52,19 +53,24 @@ function LoginForm() {
           <Mail
             size={18}
             className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-400"
+            aria-hidden="true"
           />
 
           <input
+            id="login-email"
             {...register("email")}
             type="email"
+            inputMode="email"
             autoComplete="email"
             placeholder="Enter your email"
-            className="w-full rounded-2xl border border-secondary-200 bg-white py-3 pl-12 pr-4 text-secondary-900 outline-none transition-all duration-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-100"
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? "login-email-error" : undefined}
+            className="w-full rounded-2xl border border-secondary-200 bg-white py-3 pl-12 pr-4 text-sm text-secondary-900 outline-none transition-all duration-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 placeholder:text-secondary-400"
           />
         </div>
 
         {errors.email && (
-          <p className="mt-2 text-sm text-red-600">
+          <p id="login-email-error" className="mt-1.5 text-xs font-medium text-error-600" role="alert">
             {errors.email.message}
           </p>
         )}
@@ -73,19 +79,22 @@ function LoginForm() {
       {/* Password */}
 
       <div>
-        <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-secondary-700">
-          <Lock size={16} />
+        <label htmlFor="login-password" className="mb-2 flex items-center gap-2 text-sm font-semibold text-secondary-700">
+          <Lock size={15} aria-hidden="true" />
           Password
         </label>
 
         <PasswordInput
+          id="login-password"
           placeholder="Enter your password"
           register={register}
           name="password"
+          aria-invalid={Boolean(errors.password)}
+          aria-describedby={errors.password ? "login-password-error" : undefined}
         />
 
         {errors.password && (
-          <p className="mt-2 text-sm text-red-600">
+          <p id="login-password-error" className="mt-1.5 text-xs font-medium text-error-600" role="alert">
             {errors.password.message}
           </p>
         )}
@@ -95,7 +104,7 @@ function LoginForm() {
 
       {submissionError && (
         <div
-          className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+          className="rounded-xl border border-error-200 bg-error-50 p-3.5 text-xs font-medium text-error-700"
           role="alert"
         >
           {submissionError}
@@ -107,7 +116,7 @@ function LoginForm() {
       <div className="flex justify-end">
         <Link
           to="/forgot-password"
-          className="text-sm font-medium text-primary-600 transition hover:text-primary-700 hover:underline"
+          className="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded"
         >
           Forgot Password?
         </Link>
@@ -118,18 +127,25 @@ function LoginForm() {
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="w-full"
+        className="w-full flex items-center justify-center gap-2"
       >
-        {isSubmitting ? "Signing In..." : "Sign In"}
+        {isSubmitting ? (
+          <>
+            <Loader2 size={16} className="animate-spin" aria-hidden="true" />
+            <span>Signing In...</span>
+          </>
+        ) : (
+          "Sign In"
+        )}
       </Button>
 
       {/* Register */}
 
-      <div className="border-t border-secondary-100 pt-6 text-center text-sm text-secondary-600">
+      <div className="border-t border-secondary-100 pt-5 text-center text-xs text-secondary-600">
         Don't have an account?{" "}
         <Link
           to="/register"
-          className="font-semibold text-primary-600 hover:text-primary-700"
+          className="font-bold text-primary-600 hover:text-primary-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded"
         >
           Create one
         </Link>

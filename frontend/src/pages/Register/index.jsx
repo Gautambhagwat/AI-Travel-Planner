@@ -9,13 +9,11 @@ function Register() {
       title="Create Your Account"
       subtitle="Join Itinera and start planning unforgettable journeys."
     >
-      <div className="mb-8">
+      <div className="mb-6">
 
-        <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-primary-700">
-          <Sparkles size={16} />
-          <span className="text-sm font-medium">
-            Your journey starts here
-          </span>
+        <div className="inline-flex items-center gap-2 rounded-full border border-primary-200/80 bg-primary-50 px-3.5 py-1.5 text-xs font-semibold text-primary-700">
+          <Sparkles size={14} aria-hidden="true" />
+          <span>Your journey starts here</span>
         </div>
 
       </div>
