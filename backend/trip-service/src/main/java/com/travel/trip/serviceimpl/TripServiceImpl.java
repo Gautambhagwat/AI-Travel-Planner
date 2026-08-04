@@ -31,6 +31,7 @@ public class TripServiceImpl implements TripService {
         trip.setNumberOfPeople(request.getNumberOfPeople());
         trip.setTotalPrice(request.getTotalPrice());
         trip.setStatus(request.getStatus());
+        trip.setAiRecommendation(request.getAiRecommendation());
 
         Trip savedTrip = tripRepository.save(trip);
 
@@ -51,6 +52,7 @@ public class TripServiceImpl implements TripService {
         trip.setNumberOfPeople(request.getNumberOfPeople());
         trip.setTotalPrice(request.getTotalPrice());
         trip.setStatus(request.getStatus());
+        trip.setAiRecommendation(request.getAiRecommendation());
 
         Trip updatedTrip = tripRepository.save(trip);
 
@@ -94,7 +96,17 @@ public class TripServiceImpl implements TripService {
         response.setNumberOfPeople(trip.getNumberOfPeople());
         response.setTotalPrice(trip.getTotalPrice());
         response.setStatus(trip.getStatus());
+        response.setAiRecommendation(trip.getAiRecommendation());
 
         return response;
+    }
+
+    @Override
+    public List<TripResponse> getTripsByUserId(Long userId) {
+
+        return tripRepository.findByUserId(userId)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 }

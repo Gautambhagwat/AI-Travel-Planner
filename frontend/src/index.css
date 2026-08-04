@@ -257,6 +257,47 @@
     transition-duration: var(--duration-normal);
     transition-timing-function: var(--ease-default);
   }
+  .markdown-content {
+    line-height: 1.8;
+    font-size: 16px;
+  }
+
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3 {
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .markdown-content p {
+    margin-bottom: 1rem;
+  }
+
+  .markdown-content ul {
+    list-style: disc;
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .markdown-content ol {
+    list-style: decimal;
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .markdown-content li {
+    margin-bottom: 0.5rem;
+  }
+
+  .markdown-content strong {
+    font-weight: 700;
+  }
+
+  .markdown-content hr {
+    margin: 1.5rem 0;
+    border-top: 1px solid #e5e7eb;
+  }
 }
 
 /* ── Planner Step Animations ─────────────────────────────── */

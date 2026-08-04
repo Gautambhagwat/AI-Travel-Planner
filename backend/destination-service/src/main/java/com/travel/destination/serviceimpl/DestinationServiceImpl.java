@@ -106,13 +106,12 @@ public class DestinationServiceImpl implements DestinationService {
     @Override
     public List<DestinationResponse> searchByCity(String city) {
 
-
-        return destinationRepository.findByCity(city)
+        return destinationRepository
+                .findByCityContainingIgnoreCase(city)
                 .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
-
 
 
     @Override

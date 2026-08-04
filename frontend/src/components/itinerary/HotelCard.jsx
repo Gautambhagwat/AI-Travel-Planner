@@ -17,7 +17,7 @@ function HotelCard({ hotelName, accommodation }) {
           </p>
 
           <h2 className="mt-2 text-2xl font-bold text-secondary-900">
-            {hotelName}
+            {hotelName || "Recommended Stay"}
           </h2>
         </div>
 
@@ -41,7 +41,7 @@ function HotelCard({ hotelName, accommodation }) {
             </p>
 
             <p className="font-semibold text-secondary-900">
-              {accommodation}
+              {accommodation?.type || "Hotel / Resort"}
             </p>
           </div>
         </div>
@@ -58,7 +58,7 @@ function HotelCard({ hotelName, accommodation }) {
             </p>
 
             <p className="font-semibold text-secondary-900">
-              Centrally located
+              {accommodation?.location || "Near major attractions"}
             </p>
           </div>
         </div>
@@ -74,9 +74,8 @@ function HotelCard({ hotelName, accommodation }) {
           </div>
 
           <p className="text-sm leading-6 text-secondary-600">
-            This stay matches your accommodation preference and
-            is selected to minimize travel time while keeping you
-            close to major attractions.
+            {accommodation?.description ||
+                "AI will recommend accommodation based on your destination and itinerary."}
           </p>
 
         </div>

@@ -1,7 +1,9 @@
 package com.travel.auth.serviceimpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.travel.auth.dto.LoginResponse;
 import com.travel.auth.entity.User;
@@ -26,37 +28,32 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginResponse login(
-            String email,
-            String password) {
+    public LoginResponse login(String email, String password) {
 
         User user = userRepository.findByEmail(email);
 
-        if (user == null) {
+        System.out.println("Email received: " + email);
+        System.out.println("User found: " + user);
 
-            return new LoginResponse(
-                    null,
+        if (user == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
                     "User not found"
             );
-
         }
 
+        System.out.println("Password in DB: " + user.getPassword());
+        System.out.println("Password entered: " + password);
+
         if (!user.getPassword().equals(password)) {
-
-            return new LoginResponse(
-                    null,
-                    "Invalid Password"
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Invalid password"
             );
-
         }
 
         String token = jwtUtil.generateToken(email);
 
-        return new LoginResponse(
-                token,
-                "Login Successful"
-        );
-
+        return new LoginResponse(token, "Login Successful");
     }
-
 }
