@@ -12,7 +12,7 @@ function Card({
   const paddingClasses = {
     none: "",
     sm: "p-4",
-    default: "p-6",
+    default: "p-5 sm:p-6",
     lg: "p-8",
   };
 

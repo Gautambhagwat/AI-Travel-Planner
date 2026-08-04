@@ -6,15 +6,15 @@ import Testimonials from "../../components/landing/Testimonials";
 
 function Landing() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-white">
+    <main className="min-h-screen bg-gradient-to-b from-sky-50/50 via-white to-white">
       <Hero />
 
-      <section className="space-y-28 pb-24">
+      <div className="space-y-0">
         <Features />
         <HowItWorks />
         <PopularDestinations />
         <Testimonials />
-      </section>
+      </div>
     </main>
   );
 }

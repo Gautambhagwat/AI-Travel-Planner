@@ -14,7 +14,7 @@ function TripSummary({ trip }) {
   }).format(trip.totalCost);
 
   return (
-    <section className="relative mb-10 overflow-hidden rounded-3xl bg-gradient-to-br from-sky-600 via-sky-500 to-cyan-500 p-8 text-white shadow-xl">
+    <section className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-sky-600 via-sky-500 to-cyan-500 p-5 text-white shadow-xl sm:mb-10 sm:rounded-3xl sm:p-8">
 
       <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
       <div className="absolute -bottom-20 left-0 h-56 w-56 rounded-full bg-cyan-300/10 blur-3xl" />
@@ -29,7 +29,7 @@ function TripSummary({ trip }) {
           </span>
         </div>
 
-        <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
+      <h1 className="break-words text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
           {trip.tripTitle}
         </h1>
 
@@ -40,7 +40,7 @@ function TripSummary({ trip }) {
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
-          <div className="rounded-2xl bg-white/10 p-5 backdrop-blur">
+        <div className="rounded-2xl bg-white/10 p-4 backdrop-blur sm:p-5">
             <div className="mb-3 flex items-center gap-2">
               <CalendarDays size={18} />
 
@@ -54,7 +54,7 @@ function TripSummary({ trip }) {
             </h3>
           </div>
 
-          <div className="rounded-2xl bg-white/10 p-5 backdrop-blur">
+        <div className="rounded-2xl bg-white/10 p-4 backdrop-blur sm:p-5">
             <div className="mb-3 flex items-center gap-2">
               <Users size={18} />
 
@@ -68,7 +68,7 @@ function TripSummary({ trip }) {
             </h3>
           </div>
 
-          <div className="rounded-2xl bg-white/10 p-5 backdrop-blur">
+        <div className="rounded-2xl bg-white/10 p-4 backdrop-blur sm:p-5">
             <div className="mb-3 flex items-center gap-2">
               <IndianRupee size={18} />
 
@@ -82,7 +82,7 @@ function TripSummary({ trip }) {
             </h3>
           </div>
 
-          <div className="rounded-2xl bg-white/10 p-5 backdrop-blur">
+        <div className="rounded-2xl bg-white/10 p-4 backdrop-blur sm:p-5">
             <div className="mb-3 flex items-center gap-2">
               <MapPin size={18} />
 

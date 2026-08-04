@@ -19,139 +19,141 @@ function RecentTrips({ trips }) {
   const navigate = useNavigate();
 
   return (
-    <section className="rounded-3xl border border-secondary-200 bg-white p-7 shadow-card">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-secondary-900">
-            Continue Your Journey
-          </h2>
+    <section className="flex min-w-0 flex-col justify-between rounded-2xl border border-secondary-200 bg-white p-4 shadow-card sm:rounded-3xl lg:p-5">
+      <div>
+        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold text-secondary-900 lg:text-xl">
+              Continue Your Journey
+            </h2>
 
-          <p className="mt-1 text-secondary-500">
-            Pick up where you left off.
-          </p>
-        </div>
-
-        <button
-          onClick={() => navigate("/saved-trips")}
-          className="rounded-xl px-4 py-2 font-semibold text-primary-600 transition hover:bg-primary-50"
-        >
-          View All
-        </button>
-      </div>
-
-      {trips.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-secondary-300 bg-secondary-50 py-16 text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary-100">
-            <PlaneTakeoff
-              size={40}
-              className="text-primary-600"
-            />
+            <p className="mt-0.5 text-xs text-secondary-500 sm:text-sm">
+              Pick up where you left off.
+            </p>
           </div>
 
-          <h3 className="mt-6 text-2xl font-bold text-secondary-900">
-            Your next adventure starts here
-          </h3>
-
-          <p className="mx-auto mt-3 max-w-md text-secondary-500">
-            Build your first AI-powered itinerary and discover
-            amazing places tailored just for you.
-          </p>
-
           <button
-            onClick={() => navigate("/planner")}
-            className="mt-8 rounded-2xl bg-primary-600 px-8 py-3 font-semibold text-white transition hover:scale-105 hover:bg-primary-700"
+            onClick={() => navigate("/saved-trips")}
+            className="self-start rounded-xl px-3 py-1.5 text-xs font-semibold text-primary-600 transition hover:bg-primary-50 sm:self-auto sm:text-sm"
           >
-            Plan My First Trip
+            View All
           </button>
         </div>
-      ) : (
-        <div className="space-y-7">
-          {trips.slice(0, 3).map((trip) => {
-            const image =
-              destinationImages[trip.destination] ||
-              "https://picsum.photos/1200/800?random=20";
 
-            return (
-              <article
-                key={trip.id}
-                className="group overflow-hidden rounded-3xl border border-secondary-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
-              >
-                <div className="flex flex-col lg:flex-row">
-                  {/* Image */}
-                  <div className="relative h-72 overflow-hidden lg:h-auto lg:w-[380px]">
-                    <img
-                      src={image}
-                      alt={trip.destination}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
+        {trips.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-secondary-300 bg-secondary-50 py-8 text-center sm:rounded-3xl lg:py-10">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-100">
+              <PlaneTakeoff
+                size={28}
+                className="text-primary-600"
+              />
+            </div>
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+            <h3 className="mt-4 text-lg font-bold text-secondary-900 lg:text-xl">
+              Your next adventure starts here
+            </h3>
 
-                    <div className="absolute left-5 top-5 rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-secondary-900 shadow backdrop-blur">
-                      {trip.destination}
-                    </div>
-                  </div>
+            <p className="mx-auto mt-2 max-w-md text-xs text-secondary-500 sm:text-sm">
+              Build your first AI-powered itinerary and discover
+              amazing places tailored just for you.
+            </p>
 
-                  {/* Content */}
-                  <div className="flex flex-1 flex-col justify-between p-7">
-                    <div>
-                      <span className="inline-flex rounded-full bg-primary-100 px-3 py-1 text-sm font-semibold text-primary-700">
-                        AI Generated
-                      </span>
+            <button
+              onClick={() => navigate("/planner")}
+              className="mt-5 rounded-xl bg-primary-600 px-5 py-2 text-xs font-semibold text-white transition hover:scale-105 hover:bg-primary-700 sm:text-sm"
+            >
+              Plan My First Trip
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4 lg:space-y-4">
+            {trips.slice(0, 3).map((trip) => {
+              const image =
+                destinationImages[trip.destination] ||
+                "https://picsum.photos/1200/800?random=20";
 
-                      <h3 className="mt-4 text-3xl font-bold text-secondary-900">
-                        {trip.tripTitle}
-                      </h3>
+              return (
+                <article
+                  key={trip.id}
+                  className="group overflow-hidden rounded-2xl border border-secondary-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  <div className="flex flex-col lg:flex-row">
+                    {/* Image */}
+                    <div className="relative h-40 overflow-hidden sm:h-48 lg:h-auto lg:w-[200px] xl:w-[220px] lg:shrink-0">
+                      <img
+                        src={image}
+                        alt={trip.destination}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
 
-                      <div className="mt-6 flex flex-wrap gap-6 text-secondary-600">
-                        <div className="flex items-center gap-2">
-                          <MapPin size={18} />
-                          {trip.destination}
-                        </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-                        <div className="flex items-center gap-2">
-                          <CalendarDays size={18} />
-                          {trip.days.length}{" "}
-                          {trip.days.length > 1 ? "Days" : "Day"}
-                        </div>
+                      <div className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-secondary-900 shadow backdrop-blur">
+                        {trip.destination}
                       </div>
                     </div>
 
-                    <div className="mt-8 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-                      <div className="inline-flex items-center gap-3 rounded-2xl bg-primary-50 px-5 py-3">
-                        <Wallet
-                          size={20}
-                          className="text-primary-600"
-                        />
+                    {/* Content */}
+                    <div className="min-w-0 flex flex-1 flex-col justify-between p-3.5 sm:p-4">
+                      <div>
+                        <span className="inline-flex rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-semibold text-primary-700">
+                          AI Generated
+                        </span>
 
-                        <div>
-                          <p className="text-xs uppercase tracking-wide text-secondary-500">
-                            Estimated Budget
-                          </p>
+                        <h3 className="mt-1.5 break-words text-base font-bold text-secondary-900 lg:text-lg">
+                          {trip.tripTitle}
+                        </h3>
 
-                          <p className="text-xl font-bold text-primary-700">
-                            ₹{trip.totalCost?.toLocaleString()}
-                          </p>
+                        <div className="mt-2 flex flex-wrap gap-3 text-xs text-secondary-600">
+                          <div className="flex items-center gap-1.5">
+                            <MapPin size={15} />
+                            {trip.destination}
+                          </div>
+
+                          <div className="flex items-center gap-1.5">
+                            <CalendarDays size={15} />
+                            {trip.days.length}{" "}
+                            {trip.days.length > 1 ? "Days" : "Day"}
+                          </div>
                         </div>
                       </div>
 
-                                            <button
-                        onClick={() =>
-                          navigate(`/trip-details/${trip.id}`)
-                        }
-                        className="flex items-center justify-center gap-2 rounded-2xl bg-primary-600 px-7 py-3 font-semibold text-white transition-all duration-300 hover:gap-3 hover:bg-primary-700"
-                      >
-                        Continue Planning
-                        <ArrowRight size={18} />
-                      </button>
+                      <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="inline-flex items-center gap-2 rounded-lg bg-primary-50 px-3 py-1.5">
+                          <Wallet
+                            size={16}
+                            className="text-primary-600"
+                          />
+
+                          <div>
+                            <p className="text-[10px] uppercase tracking-wide text-secondary-500">
+                              Estimated Budget
+                            </p>
+
+                            <p className="text-sm font-bold text-primary-700">
+                              ₹{trip.totalCost?.toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() =>
+                            navigate(`/trip-details/${trip.id}`)
+                          }
+                          className="flex items-center justify-center gap-1.5 rounded-lg bg-primary-600 px-3.5 py-2 text-xs font-semibold text-white transition-all duration-300 hover:gap-2 hover:bg-primary-700"
+                        >
+                          Continue Planning
+                          <ArrowRight size={15} />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      )}
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </section>
   );
 }

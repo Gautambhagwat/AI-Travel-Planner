@@ -7,7 +7,7 @@ import {
 
 function DayCard({ day }) {
   return (
-    <section className="relative rounded-3xl border border-secondary-200 bg-white p-8 shadow-card">
+    <section className="relative rounded-2xl border border-secondary-200 bg-white p-5 shadow-card sm:rounded-3xl sm:p-8">
 
       <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
 
@@ -21,7 +21,7 @@ function DayCard({ day }) {
             </span>
           </div>
 
-          <h2 className="mt-4 text-3xl font-bold text-secondary-900">
+          <h2 className="mt-4 break-words text-2xl font-bold text-secondary-900 sm:text-3xl">
             {day.title}
           </h2>
 
@@ -54,7 +54,7 @@ function DayCard({ day }) {
         {day.activities.map((activity, index) => (
           <div
             key={activity}
-            className="flex gap-5"
+            className="flex gap-3 sm:gap-5"
           >
 
             <div className="flex flex-col items-center">
@@ -69,13 +69,13 @@ function DayCard({ day }) {
 
             </div>
 
-            <div className="flex-1 rounded-2xl border border-secondary-200 p-5 transition hover:border-primary-200 hover:bg-secondary-50">
+            <div className="min-w-0 flex-1 rounded-2xl border border-secondary-200 p-4 transition hover:border-primary-200 hover:bg-secondary-50 sm:p-5">
 
               <div className="flex items-start justify-between gap-4">
 
                 <div>
 
-                  <p className="text-lg font-semibold text-secondary-900">
+                  <p className="break-words text-lg font-semibold text-secondary-900">
                     {activity}
                   </p>
 

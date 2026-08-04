@@ -3,7 +3,7 @@ import Sidebar from "../components/layout/Sidebar";
 
 function ProtectedLayout() {
   return (
-    <div className="flex">
+    <div className="min-w-0 lg:flex">
       <Sidebar />
 
       <main className="flex-1">

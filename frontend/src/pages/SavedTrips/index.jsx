@@ -40,7 +40,7 @@ function SavedTrips() {
     <DashboardLayout>
       {/* Header */}
 
-      <section className="mb-10 rounded-3xl bg-gradient-to-br from-sky-600 via-sky-500 to-cyan-500 p-8 text-white shadow-xl">
+      <section className="mb-8 rounded-2xl bg-gradient-to-br from-sky-600 via-sky-500 to-cyan-500 p-5 text-white shadow-xl sm:mb-10 sm:rounded-3xl sm:p-8">
 
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
 
@@ -53,7 +53,7 @@ function SavedTrips() {
               </span>
             </div>
 
-            <h1 className="text-4xl font-bold">
+            <h1 className="text-3xl font-bold sm:text-4xl">
               Saved Trips
             </h1>
 
@@ -63,7 +63,7 @@ function SavedTrips() {
             </p>
           </div>
 
-          <Button onClick={() => navigate("/planner")}>
+          <Button className="w-full sm:w-auto" onClick={() => navigate("/planner")}>
             Plan New Trip
           </Button>
 
@@ -73,7 +73,7 @@ function SavedTrips() {
 
       {/* Search */}
 
-      <section className="mb-10 rounded-3xl border border-secondary-200 bg-white p-6 shadow-card">
+      <section className="mb-8 rounded-2xl border border-secondary-200 bg-white p-4 shadow-card sm:mb-10 sm:rounded-3xl sm:p-6">
 
         <div className="relative">
 
@@ -112,12 +112,12 @@ function SavedTrips() {
           {filteredTrips.map((trip) => (
             <article
               key={trip.id}
-              className="group overflow-hidden rounded-3xl border border-secondary-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="group min-w-0 overflow-hidden rounded-2xl border border-secondary-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:rounded-3xl"
             >
 
               <div className="h-2 bg-gradient-to-r from-sky-500 to-cyan-500" />
 
-              <div className="p-6">
+              <div className="p-5 sm:p-6">
 
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-primary-700">
                   <MapPin size={16} />
@@ -127,7 +127,7 @@ function SavedTrips() {
                   </span>
                 </div>
 
-                <h2 className="text-2xl font-bold text-secondary-900">
+                <h2 className="break-words text-xl font-bold text-secondary-900 sm:text-2xl">
                   {trip.tripTitle}
                 </h2>
 
@@ -158,6 +158,7 @@ function SavedTrips() {
 
                   <Button
                     size="sm"
+                    className="w-full sm:w-auto"
                     onClick={() =>
                       navigate(`/trip-details/${trip.id}`)
                     }

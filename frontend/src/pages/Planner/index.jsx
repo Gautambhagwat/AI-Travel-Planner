@@ -23,27 +23,24 @@ function Planner() {
     <DashboardLayout>
       <PlannerLayout
         sidebar={<TripSummarySidebar />}
+        validationMessage={validationMessage}
       >
         <ProgressBar />
 
-        {validationMessage && (
-          <p
-            className="mb-6 rounded-lg bg-red-50 p-3 text-sm text-red-700"
-            role="alert"
-          >
-            {validationMessage}
-          </p>
-        )}
-
-        {step === 1 && <StepDestination />}
-        {step === 2 && <StepDates />}
-        {step === 3 && <StepBudget />}
-        {step === 4 && <StepTravelers />}
-        {step === 5 && <StepTravelStyle />}
-        {step === 6 && <StepInterests />}
-        {step === 7 && <StepTransport />}
-        {step === 8 && <StepAccommodation />}
-        {step === 9 && <StepReview />}
+        <div
+          key={step}
+          className="animate-[fadeSlideIn_0.3s_ease-out]"
+        >
+          {step === 1 && <StepDestination />}
+          {step === 2 && <StepDates />}
+          {step === 3 && <StepBudget />}
+          {step === 4 && <StepTravelers />}
+          {step === 5 && <StepTravelStyle />}
+          {step === 6 && <StepInterests />}
+          {step === 7 && <StepTransport />}
+          {step === 8 && <StepAccommodation />}
+          {step === 9 && <StepReview />}
+        </div>
 
         <NavigationButtons />
       </PlannerLayout>

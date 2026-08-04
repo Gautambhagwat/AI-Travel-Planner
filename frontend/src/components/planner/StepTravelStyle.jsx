@@ -8,7 +8,6 @@ import {
   Check,
 } from "lucide-react";
 
-import Card from "../ui/Card";
 import SectionHeader from "../ui/SectionHeader";
 
 import usePlanner from "../../hooks/usePlanner";
@@ -18,31 +17,43 @@ const travelStyles = [
     value: "Adventure",
     icon: Mountain,
     description: "Thrilling outdoor adventures and exciting activities.",
+    emoji: "🏔️",
+    color: "emerald",
   },
   {
     value: "Relaxation",
     icon: Palmtree,
     description: "Peaceful vacations with beaches, resorts and slow travel.",
+    emoji: "🌴",
+    color: "cyan",
   },
   {
     value: "Luxury",
     icon: Crown,
     description: "Premium hotels, curated experiences and fine dining.",
+    emoji: "👑",
+    color: "amber",
   },
   {
     value: "Family",
     icon: Users,
     description: "Comfortable trips designed for all age groups.",
+    emoji: "👨‍👩‍👧",
+    color: "violet",
   },
   {
     value: "Romantic",
     icon: Heart,
     description: "Perfect for couples, anniversaries and honeymoons.",
+    emoji: "💑",
+    color: "rose",
   },
   {
     value: "Business",
     icon: Briefcase,
     description: "Efficient travel with comfort and productivity.",
+    emoji: "💼",
+    color: "slate",
   },
 ];
 
@@ -50,102 +61,88 @@ function StepTravelStyle() {
   const { tripData, updateTripData } = usePlanner();
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-7">
       <SectionHeader
         title="Choose your travel style"
         subtitle="This helps AI personalize accommodations, attractions and your daily itinerary."
       />
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" role="group" aria-label="Select travel style">
         {travelStyles.map((style) => {
-          const Icon = style.icon;
           const selected = tripData.travelStyle === style.value;
 
           return (
-            <Card
+            <button
               key={style.value}
-              hover
+              type="button"
+              aria-pressed={selected}
               onClick={() =>
-                updateTripData({
-                  travelStyle: style.value,
-                })
+                updateTripData({ travelStyle: style.value })
               }
-              className={`group cursor-pointer overflow-hidden border-2 transition-all duration-300 ${
-                selected
-                  ? "border-primary-500 bg-primary-50 shadow-lg"
-                  : "border-secondary-200 hover:border-primary-200"
-              }`}
+              className={`group relative w-full text-left rounded-2xl border-2 p-5 transition-all duration-300 cursor-pointer
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+                ${selected
+                  ? "border-primary-500 bg-primary-50 shadow-md shadow-primary-100"
+                  : "border-secondary-200 bg-white hover:border-primary-200 hover:bg-secondary-50 hover:shadow-sm hover:-translate-y-0.5"
+                }
+              `}
             >
-              <div className="flex items-start justify-between">
-                <div
-                  className={`rounded-2xl p-4 transition ${
-                    selected
-                      ? "bg-primary-100 text-primary-700"
-                      : "bg-secondary-100 text-secondary-600 group-hover:bg-primary-50 group-hover:text-primary-600"
-                  }`}
-                >
-                  <Icon size={26} />
+              {/* Selected checkmark */}
+              {selected && (
+                <div className="absolute top-3 right-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary-600 text-white animate-[checkBounce_0.3s_ease-out]">
+                  <Check size={11} aria-hidden="true" />
                 </div>
+              )}
 
-                {selected && (
-                  <div className="rounded-full bg-primary-600 p-1 text-white">
-                    <Check size={14} />
-                  </div>
-                )}
+              <div
+                className={`mb-4 flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-300 text-2xl ${
+                  selected
+                    ? "bg-primary-100 shadow-sm"
+                    : "bg-secondary-100 group-hover:bg-primary-50"
+                }`}
+                aria-hidden="true"
+              >
+                {style.emoji}
               </div>
 
-              <div className="mt-6">
-                <h3 className="text-xl font-semibold text-secondary-900">
-                  {style.value}
-                </h3>
+              <h3 className="text-base font-semibold text-secondary-900">
+                {style.value}
+              </h3>
 
-                <p className="mt-3 leading-7 text-secondary-600">
-                  {style.description}
-                </p>
-              </div>
-            </Card>
+              <p className="mt-1.5 text-xs leading-relaxed text-secondary-500">
+                {style.description}
+              </p>
+            </button>
           );
         })}
       </div>
 
-      <Card className="border-primary-200 bg-gradient-to-r from-primary-50 to-cyan-50">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-secondary-500">
+      {/* Selection summary */}
+      {tripData.travelStyle ? (
+        <div className="flex items-center gap-4 rounded-2xl border border-primary-200 bg-gradient-to-r from-primary-50 to-sky-50 p-5 animate-[fadeSlideIn_0.3s_ease-out]">
+          <div className="text-3xl select-none" aria-hidden="true">
+            {travelStyles.find((s) => s.value === tripData.travelStyle)?.emoji}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold uppercase tracking-wide text-primary-500">
               Selected Style
             </p>
-
-            <h3 className="mt-2 text-3xl font-bold text-secondary-900">
-              {tripData.travelStyle || "Not selected"}
-            </h3>
-
-            <p className="mt-3 text-secondary-600">
-              AI will recommend destinations, activities and hotels that match
-              this travel style.
+            <p className="mt-0.5 text-xl font-extrabold text-secondary-900">
+              {tripData.travelStyle}
+            </p>
+            <p className="mt-1 text-xs text-secondary-500 leading-relaxed">
+              AI will tailor your destinations, activities and stays to match this vibe.
             </p>
           </div>
-
-          {tripData.travelStyle && (
-            <div className="hidden rounded-2xl bg-primary-600 p-4 text-white md:block">
-              <SparklesIcon />
-            </div>
-          )}
         </div>
-      </Card>
+      ) : (
+        <div className="rounded-xl border border-dashed border-secondary-200 bg-secondary-50/50 px-5 py-4 text-center">
+          <p className="text-sm text-secondary-400">
+            Pick a style to see how it shapes your trip
+          </p>
+        </div>
+      )}
     </div>
-  );
-}
-
-function SparklesIcon() {
-  return (
-    <svg
-      width="28"
-      height="28"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-    >
-      <path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2zm7 12l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9L19 14zM5 14l.9 2.1L8 17l-2.1.9L5 20l-.9-2.1L2 17l2.1-.9L5 14z" />
-    </svg>
   );
 }
 

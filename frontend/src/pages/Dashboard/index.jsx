@@ -35,7 +35,7 @@ function Dashboard() {
 
       <WelcomeBanner />
 
-      <section className="my-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <section className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
 
         <StatCard
           title="Saved Trips"
@@ -54,13 +54,9 @@ function Dashboard() {
 
       </section>
 
-      <section className="mb-10">
+      <QuickActions />
 
-        <QuickActions />
-
-      </section>
-
-      <section className="grid gap-6 lg:grid-cols-2">
+      <section className="grid gap-5 lg:grid-cols-2">
 
         <RecentTrips trips={trips} />
 

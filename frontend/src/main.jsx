@@ -8,6 +8,7 @@ import App from "./App";
 import AuthProvider from "./context/AuthContext";
 import PlannerProvider from "./context/PlannerContext";
 import ItineraryProvider from "./context/ItineraryContext";
+import { ToastProvider } from "./components/ui/Toast";
 
 createRoot(document.getElementById("root")).render(
    <StrictMode>
@@ -15,6 +16,7 @@ createRoot(document.getElementById("root")).render(
       <PlannerProvider>
         <ItineraryProvider>
           <App />
+          <ToastProvider />
         </ItineraryProvider>
       </PlannerProvider>
     </AuthProvider>

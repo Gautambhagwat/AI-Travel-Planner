@@ -6,54 +6,59 @@ import {
 } from "lucide-react";
 
 const iconMap = {
-  "Saved trips": PlaneTakeoff,
-  Destinations: MapPinned,
-  "Estimated spend": Wallet,
+  "saved trips": PlaneTakeoff,
+  destinations: MapPinned,
+  "estimated budget": Wallet,
+  "estimated spend": Wallet,
 };
 
 const colorMap = {
-  "Saved trips": "bg-primary-100 text-primary-700",
-  Destinations: "bg-accent-100 text-accent-700",
-  "Estimated spend": "bg-success-100 text-success-700",
+  "saved trips": "bg-primary-100 text-primary-700",
+  destinations: "bg-accent-100 text-accent-700",
+  "estimated budget": "bg-success-100 text-success-700",
+  "estimated spend": "bg-success-100 text-success-700",
 };
 
 function StatCard({ title, value }) {
-  const Icon = iconMap[title] || PlaneTakeoff;
+  const key = (title || "").toLowerCase();
+  const Icon = iconMap[key] || PlaneTakeoff;
   const colors =
-    colorMap[title] || "bg-secondary-100 text-secondary-700";
+    colorMap[key] || "bg-secondary-100 text-secondary-700";
 
   return (
-    <div className="group rounded-3xl border border-secondary-200 bg-white p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover">
+    <div className="group flex flex-col justify-between rounded-2xl border border-secondary-200 bg-white p-4 shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-card-hover sm:rounded-3xl lg:p-5">
 
-      {/* Top Row */}
-      <div className="flex items-center justify-between">
+      <div>
+        {/* Top Row */}
+        <div className="flex items-center justify-between">
 
-        <div
-          className={`flex h-14 w-14 items-center justify-center rounded-2xl ${colors}`}
-        >
-          <Icon size={28} />
+          <div
+            className={`flex h-10 w-10 items-center justify-center rounded-xl lg:h-11 lg:w-11 ${colors}`}
+          >
+            <Icon size={20} />
+          </div>
+
+          <div className="flex items-center gap-1 rounded-full bg-success-50 px-2.5 py-0.5 text-xs font-semibold text-success-700">
+            <TrendingUp size={12} />
+            Active
+          </div>
+
         </div>
 
-        <div className="flex items-center gap-1 rounded-full bg-success-50 px-3 py-1 text-xs font-semibold text-success-700">
-          <TrendingUp size={14} />
-          Active
-        </div>
+        {/* Title */}
+        <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-secondary-500">
+          {title}
+        </p>
 
+        {/* Value */}
+        <h3 className="mt-1 text-2xl font-bold text-secondary-900 lg:text-3xl">
+          {value}
+        </h3>
       </div>
 
-      {/* Title */}
-      <p className="mt-6 text-sm font-medium uppercase tracking-wide text-secondary-500">
-        {title}
-      </p>
-
-      {/* Value */}
-      <h3 className="mt-2 text-4xl font-bold text-secondary-900">
-        {value}
-      </h3>
-
       {/* Footer */}
-      <div className="mt-6 border-t border-secondary-100 pt-4">
-        <p className="text-sm text-secondary-500">
+      <div className="mt-3 border-t border-secondary-100 pt-2.5">
+        <p className="text-xs text-secondary-400">
           Updated just now
         </p>
       </div>

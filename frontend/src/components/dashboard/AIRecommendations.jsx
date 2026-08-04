@@ -32,89 +32,91 @@ function AIRecommendations() {
   ];
 
   return (
-    <section className="rounded-3xl border border-secondary-200 bg-white p-6 shadow-card">
+    <section className="flex flex-col justify-between rounded-2xl border border-secondary-200 bg-white p-4 shadow-card sm:rounded-3xl lg:p-5">
 
-      <div className="mb-6 flex items-center gap-3">
+      <div>
+        <div className="mb-4 flex items-center gap-3">
 
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-primary-700">
-          <Sparkles size={26} />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-100 text-primary-700 lg:h-10 lg:w-10">
+            <Sparkles size={18} />
+          </div>
+
+          <div>
+            <h2 className="text-lg font-bold text-secondary-900 lg:text-xl">
+              AI Travel Insights
+            </h2>
+
+            <p className="text-xs text-secondary-500 sm:text-sm">
+              Personalized recommendations based on your travel preferences.
+            </p>
+          </div>
+
         </div>
 
-        <div>
-          <h2 className="text-2xl font-bold text-secondary-900">
-            AI Travel Insights
-          </h2>
+        <div className="space-y-3">
 
-          <p className="text-secondary-500">
-            Personalized recommendations based on your travel preferences.
-          </p>
-        </div>
+          {recommendations.map((item) => {
+            const Icon = item.icon;
 
-      </div>
+            return (
+              <div
+                key={item.title}
+                className="group rounded-xl border border-secondary-200 p-3 transition-all duration-300 hover:border-primary-200 hover:bg-primary-50 lg:p-3.5"
+              >
 
-      <div className="space-y-5">
+                <div className="flex gap-3">
 
-        {recommendations.map((item) => {
-          const Icon = item.icon;
+                  <div
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${item.color}`}
+                  >
+                    <Icon size={18} />
+                  </div>
 
-          return (
-            <div
-              key={item.title}
-              className="group rounded-2xl border border-secondary-200 p-5 transition-all duration-300 hover:border-primary-200 hover:bg-primary-50"
-            >
+                  <div className="min-w-0 flex-1">
 
-              <div className="flex gap-4">
+                    <h3 className="text-sm font-semibold text-secondary-900">
+                      {item.title}
+                    </h3>
 
-                <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-xl ${item.color}`}
-                >
-                  <Icon size={24} />
-                </div>
+                    <p className="mt-0.5 text-xs leading-relaxed text-secondary-600">
+                      {item.description}
+                    </p>
 
-                <div className="flex-1">
-
-                  <h3 className="font-semibold text-secondary-900">
-                    {item.title}
-                  </h3>
-
-                  <p className="mt-2 text-sm leading-relaxed text-secondary-600">
-                    {item.description}
-                  </p>
+                  </div>
 
                 </div>
 
               </div>
+            );
+          })}
 
-            </div>
-          );
-        })}
-
+        </div>
       </div>
 
-      <div className="mt-8 rounded-2xl bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 p-6 text-white">
+      <div className="mt-4 rounded-xl bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 p-3.5 text-white lg:mt-5 lg:p-4">
 
         <div className="flex items-center gap-2">
 
-          <Sparkles size={22} />
+          <Sparkles size={16} />
 
-          <h3 className="text-xl font-semibold">
+          <h3 className="text-sm font-semibold lg:text-base">
             AI Suggestion
           </h3>
 
         </div>
 
-        <p className="mt-3 leading-relaxed text-primary-50">
+        <p className="mt-1.5 text-xs leading-relaxed text-primary-50">
           Your recent trips suggest you enjoy beach destinations and
           relaxed vacations. Consider planning a 5–7 day trip to Kerala
           or the Andaman Islands during the winter season.
         </p>
 
         <button
-          className="mt-6 flex items-center gap-2 rounded-xl bg-white px-5 py-3 font-medium text-primary-700 transition hover:scale-105"
+          className="mt-3 flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-2 text-xs font-semibold text-primary-700 transition hover:scale-105"
         >
           Generate Full Itinerary
 
-          <ArrowRight size={18} />
+          <ArrowRight size={15} />
         </button>
 
       </div>

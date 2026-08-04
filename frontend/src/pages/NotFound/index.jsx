@@ -7,9 +7,9 @@ function NotFound() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 via-white to-cyan-50 px-6">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 via-white to-cyan-50 px-4 sm:px-6">
 
-      <div className="w-full max-w-3xl rounded-3xl border border-secondary-200 bg-white p-12 text-center shadow-2xl">
+      <div className="w-full max-w-3xl rounded-2xl border border-secondary-200 bg-white p-6 text-center shadow-2xl sm:rounded-3xl sm:p-12">
 
         {/* Icon */}
 
@@ -19,11 +19,11 @@ function NotFound() {
 
         {/* 404 */}
 
-        <p className="mt-8 text-7xl font-black tracking-tight text-primary-600">
+        <p className="mt-8 text-6xl font-black tracking-tight text-primary-600 sm:text-7xl">
           404
         </p>
 
-        <h1 className="mt-4 text-4xl font-bold text-secondary-900">
+        <h1 className="mt-4 text-3xl font-bold text-secondary-900 sm:text-4xl">
           Looks like you're off the map
         </h1>
 

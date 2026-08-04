@@ -7,7 +7,7 @@ function Register() {
   return (
     <AuthLayout
       title="Create Your Account"
-      subtitle="Join AI Travel Planner and start planning unforgettable journeys."
+      subtitle="Join Itinera and start planning unforgettable journeys."
     >
       <div className="mb-8">
 

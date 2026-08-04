@@ -1,40 +1,16 @@
 import { Link, NavLink } from "react-router-dom";
-import { Compass } from "lucide-react";
+
+import BrandLogo from "../common/BrandLogo";
 
 function Navbar() {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/20 bg-white/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-secondary-200/60 bg-white/85 backdrop-blur-xl transition-all">
 
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:h-20 sm:px-6 lg:h-20 lg:px-8 xl:px-10">
 
         {/* Logo */}
 
-        <Link
-          to="/"
-          className="flex items-center gap-3"
-        >
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-600 shadow-lg">
-
-            <Compass
-              size={24}
-              className="text-white"
-            />
-
-          </div>
-
-          <div>
-
-            <h1 className="text-lg font-bold text-secondary-900">
-              AI Travel
-            </h1>
-
-            <p className="text-xs text-secondary-500">
-              Plan smarter
-            </p>
-
-          </div>
-
-        </Link>
+        <BrandLogo variant="full" size="md" clickable />
 
         {/* Navigation */}
 
@@ -42,28 +18,28 @@ function Navbar() {
 
           <NavLink
             to="/"
-            className="font-medium text-secondary-600 transition hover:text-primary-600"
+            className="text-sm font-semibold text-secondary-600 transition hover:text-primary-600 lg:text-base"
           >
             Home
           </NavLink>
 
           <a
             href="#features"
-            className="font-medium text-secondary-600 transition hover:text-primary-600"
+            className="text-sm font-semibold text-secondary-600 transition hover:text-primary-600 lg:text-base"
           >
             Features
           </a>
 
           <a
             href="#destinations"
-            className="font-medium text-secondary-600 transition hover:text-primary-600"
+            className="text-sm font-semibold text-secondary-600 transition hover:text-primary-600 lg:text-base"
           >
             Destinations
           </a>
 
           <a
             href="#testimonials"
-            className="font-medium text-secondary-600 transition hover:text-primary-600"
+            className="text-sm font-semibold text-secondary-600 transition hover:text-primary-600 lg:text-base"
           >
             Reviews
           </a>
@@ -72,18 +48,18 @@ function Navbar() {
 
         {/* Right Side */}
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
 
           <Link
             to="/login"
-            className="rounded-xl px-5 py-2.5 font-semibold text-secondary-700 transition hover:bg-secondary-100"
+            className="rounded-xl px-4 py-2 text-sm font-semibold text-secondary-700 transition hover:bg-secondary-100/80 hover:text-primary-600 lg:text-sm"
           >
             Login
           </Link>
 
           <Link
             to="/register"
-            className="rounded-2xl bg-primary-600 px-6 py-3 font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-primary-700"
+            className="rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-primary-500/20 transition-all hover:-translate-y-0.5 hover:bg-primary-700 hover:shadow-lg sm:px-5 sm:py-2.5"
           >
             Get Started
           </Link>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   User,
   MapPin,
@@ -7,184 +8,632 @@ import {
   Sparkles,
   Compass,
   Settings,
+  X,
+  Globe,
+  Clock,
+  Star,
+  Zap,
+  Camera,
+  Mail,
+  Shield,
+  TrendingUp,
+  Check,
+  ChevronRight,
+  Mountain,
+  Utensils,
+  Coffee,
+  Heart,
 } from "lucide-react";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import Button from "../../components/common/Button";
 
+/* ─── Mock data (no backend changes) ─────────────────────── */
+const INITIAL_USER = {
+  name: "Traveler",
+  email: "traveler@example.com",
+  joined: "July 2026",
+  travelStyle: "Luxury",
+  preferredTransport: "Flight",
+  budget: "Medium",
+  trips: 12,
+  countries: 7,
+  days: 48,
+  bio: "Passionate explorer chasing sunsets across continents.",
+  interests: ["Beach", "Mountains", "Culture", "Food", "Adventure"],
+  favoriteDestination: "Santorini, Greece",
+};
+
+const RECENT_ACTIVITY = [
+  {
+    id: 1,
+    icon: Plane,
+    color: "bg-primary-100 text-primary-600",
+    title: "Trip to Bali planned",
+    subtitle: "7-day itinerary · 14 activities",
+    time: "2 days ago",
+    badge: "New",
+    badgeColor: "bg-primary-100 text-primary-700",
+  },
+  {
+    id: 2,
+    icon: MapPin,
+    color: "bg-accent-100 text-accent-600",
+    title: "Saved Paris to wishlist",
+    subtitle: "France · Europe",
+    time: "5 days ago",
+    badge: null,
+  },
+  {
+    id: 3,
+    icon: Star,
+    color: "bg-warning-100 text-warning-600",
+    title: "Reviewed Tokyo trip",
+    subtitle: "Rated 5 stars · 12 days",
+    time: "1 week ago",
+    badge: null,
+  },
+  {
+    id: 4,
+    icon: Globe,
+    color: "bg-success-100 text-success-600",
+    title: "Explored 3 new destinations",
+    subtitle: "Portugal, Morocco, Jordan",
+    time: "2 weeks ago",
+    badge: null,
+  },
+];
+
+const INTEREST_ICONS = {
+  Beach: { icon: Globe, color: "bg-cyan-100 text-cyan-700" },
+  Mountains: { icon: Mountain, color: "bg-emerald-100 text-emerald-700" },
+  Culture: { icon: Sparkles, color: "bg-purple-100 text-purple-700" },
+  Food: { icon: Utensils, color: "bg-orange-100 text-orange-700" },
+  Adventure: { icon: Zap, color: "bg-yellow-100 text-yellow-700" },
+  Coffee: { icon: Coffee, color: "bg-amber-100 text-amber-700" },
+};
+
+const PREF_META = {
+  travelStyle: {
+    label: "Travel Style",
+    icon: Compass,
+    color: "bg-primary-100 text-primary-700",
+    gradient: "from-primary-50 to-white",
+  },
+  preferredTransport: {
+    label: "Transport",
+    icon: Plane,
+    color: "bg-accent-100 text-accent-700",
+    gradient: "from-accent-50 to-white",
+  },
+  budget: {
+    label: "Budget Range",
+    icon: Wallet,
+    color: "bg-success-100 text-success-700",
+    gradient: "from-success-50 to-white",
+  },
+  favoriteDestination: {
+    label: "Favourite Spot",
+    icon: Heart,
+    color: "bg-rose-100 text-rose-700",
+    gradient: "from-rose-50 to-white",
+  },
+};
+
+/* ─── Edit Profile Modal ──────────────────────────────────── */
+function EditProfileModal({ user, onClose, onSave }) {
+  const [form, setForm] = useState({
+    name: user.name,
+    bio: user.bio,
+    travelStyle: user.travelStyle,
+    preferredTransport: user.preferredTransport,
+    budget: user.budget,
+    favoriteDestination: user.favoriteDestination,
+  });
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    onSave(form);
+    onClose();
+  }
+
+  return (
+    /* Backdrop */
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="edit-profile-title"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm sm:items-center"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      {/* Drawer / Sheet */}
+      <div
+        className="w-full max-w-lg animate-[scaleIn_0.25s_ease-out] rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl"
+        style={{ animation: "slideUpIn 0.3s cubic-bezier(0.34,1.56,0.64,1)" }}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-secondary-100 px-6 py-5">
+          <div>
+            <h2 id="edit-profile-title" className="text-xl font-bold text-secondary-900">
+              Edit Profile
+            </h2>
+            <p className="mt-0.5 text-xs text-secondary-400">
+              Changes are local only · for demo purposes
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close edit profile modal"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-secondary-400 transition-all duration-150 hover:bg-secondary-100 hover:text-secondary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-500"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <form onSubmit={handleSubmit} className="max-h-[70vh] overflow-y-auto px-6 py-6">
+          {/* Avatar placeholder */}
+          <div className="mb-6 flex flex-col items-center gap-3">
+            <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary-400 to-cyan-500 text-white shadow-lg">
+              <User size={36} />
+              <button
+                type="button"
+                aria-label="Change avatar"
+                className="absolute -bottom-1 -right-1 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-2 border-white bg-primary-600 text-white transition-transform hover:scale-110"
+              >
+                <Camera size={12} />
+              </button>
+            </div>
+            <p className="text-xs text-secondary-400">Avatar upload coming soon</p>
+          </div>
+
+          <div className="space-y-4">
+            {/* Name */}
+            <div>
+              <label htmlFor="edit-name" className="mb-1.5 block text-sm font-medium text-secondary-700">
+                Display Name
+              </label>
+              <input
+                id="edit-name"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-secondary-200 bg-secondary-50 px-4 py-2.5 text-sm text-secondary-900 outline-none transition focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100"
+              />
+            </div>
+
+            {/* Bio */}
+            <div>
+              <label htmlFor="edit-bio" className="mb-1.5 block text-sm font-medium text-secondary-700">
+                Bio
+              </label>
+              <textarea
+                id="edit-bio"
+                name="bio"
+                rows={2}
+                value={form.bio}
+                onChange={handleChange}
+                className="w-full resize-none rounded-xl border border-secondary-200 bg-secondary-50 px-4 py-2.5 text-sm text-secondary-900 outline-none transition focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100"
+              />
+            </div>
+
+            {/* Travel Style */}
+            <div>
+              <label htmlFor="edit-style" className="mb-1.5 block text-sm font-medium text-secondary-700">
+                Travel Style
+              </label>
+              <select
+                id="edit-style"
+                name="travelStyle"
+                value={form.travelStyle}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-secondary-200 bg-secondary-50 px-4 py-2.5 text-sm text-secondary-900 outline-none transition focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100"
+              >
+                {["Budget", "Mid-range", "Luxury", "Backpacker", "Family"].map((s) => (
+                  <option key={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Transport */}
+            <div>
+              <label htmlFor="edit-transport" className="mb-1.5 block text-sm font-medium text-secondary-700">
+                Preferred Transport
+              </label>
+              <select
+                id="edit-transport"
+                name="preferredTransport"
+                value={form.preferredTransport}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-secondary-200 bg-secondary-50 px-4 py-2.5 text-sm text-secondary-900 outline-none transition focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100"
+              >
+                {["Flight", "Train", "Road Trip", "Cruise", "Mixed"].map((t) => (
+                  <option key={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Budget */}
+            <div>
+              <label htmlFor="edit-budget" className="mb-1.5 block text-sm font-medium text-secondary-700">
+                Budget Range
+              </label>
+              <select
+                id="edit-budget"
+                name="budget"
+                value={form.budget}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-secondary-200 bg-secondary-50 px-4 py-2.5 text-sm text-secondary-900 outline-none transition focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100"
+              >
+                {["Low", "Medium", "High", "Flexible"].map((b) => (
+                  <option key={b}>{b}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Favourite Destination */}
+            <div>
+              <label htmlFor="edit-fav" className="mb-1.5 block text-sm font-medium text-secondary-700">
+                Favourite Destination
+              </label>
+              <input
+                id="edit-fav"
+                name="favoriteDestination"
+                value={form.favoriteDestination}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-secondary-200 bg-secondary-50 px-4 py-2.5 text-sm text-secondary-900 outline-none transition focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100"
+              />
+            </div>
+          </div>
+        </form>
+
+        {/* Footer */}
+        <div className="flex gap-3 border-t border-secondary-100 px-6 py-4">
+          <Button variant="secondary" className="flex-1" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" className="flex-1 gap-2" onClick={handleSubmit}>
+            <Check size={15} />
+            Save Changes
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Stat Card ───────────────────────────────────────────── */
+function ProfileStatCard({ icon: Icon, value, label, color, gradient, trend }) {
+  return (
+    <div
+      className={`group relative overflow-hidden rounded-2xl border border-secondary-100 bg-gradient-to-br ${gradient} p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:rounded-3xl sm:p-6`}
+    >
+      {/* Decorative blob */}
+      <div className="pointer-events-none absolute -right-4 -top-4 h-20 w-20 rounded-full bg-white/40 blur-xl" />
+
+      <div className="flex items-start justify-between">
+        <div
+          className={`flex h-11 w-11 items-center justify-center rounded-2xl ${color} transition-transform duration-300 group-hover:scale-110`}
+        >
+          <Icon size={20} />
+        </div>
+        {trend && (
+          <div className="flex items-center gap-1 rounded-full bg-success-50 px-2 py-0.5 text-xs font-semibold text-success-700">
+            <TrendingUp size={11} />
+            {trend}
+          </div>
+        )}
+      </div>
+
+      <p className="mt-4 text-3xl font-bold tracking-tight text-secondary-900 sm:text-4xl">
+        {value}
+      </p>
+      <p className="mt-1 text-sm font-medium text-secondary-500">{label}</p>
+    </div>
+  );
+}
+
+/* ─── Preference Card ─────────────────────────────────────── */
+function PrefCard({ icon: Icon, label, value, color, gradient }) {
+  return (
+    <div
+      className={`group flex items-center gap-4 rounded-2xl border border-secondary-100 bg-gradient-to-r ${gradient} p-4 transition-all duration-200 hover:-translate-x-0.5 hover:shadow-md focus-within:ring-2 focus-within:ring-primary-200`}
+    >
+      <div
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${color} transition-transform duration-200 group-hover:scale-110`}
+      >
+        <Icon size={18} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs font-semibold uppercase tracking-wider text-secondary-400">
+          {label}
+        </p>
+        <p className="mt-0.5 truncate text-sm font-semibold text-secondary-800">
+          {value}
+        </p>
+      </div>
+      <ChevronRight size={15} className="shrink-0 text-secondary-300 transition-transform duration-200 group-hover:translate-x-0.5" />
+    </div>
+  );
+}
+
+/* ─── Interest Chip ───────────────────────────────────────── */
+function InterestChip({ label }) {
+  const meta = INTEREST_ICONS[label] || { icon: Globe, color: "bg-secondary-100 text-secondary-600" };
+  const IconComp = meta.icon;
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full ${meta.color} px-3 py-1.5 text-xs font-semibold transition-all duration-150 hover:scale-105 hover:shadow-sm`}
+    >
+      <IconComp size={12} />
+      {label}
+    </span>
+  );
+}
+
+/* ─── Activity Item ───────────────────────────────────────── */
+function ActivityItem({ item }) {
+  const IconComp = item.icon;
+  return (
+    <div className="group flex items-center gap-4 rounded-2xl p-3 transition-all duration-200 hover:bg-secondary-50">
+      <div
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${item.color} transition-transform duration-200 group-hover:scale-110`}
+      >
+        <IconComp size={18} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-semibold text-secondary-800 truncate">{item.title}</p>
+        <p className="mt-0.5 text-xs text-secondary-400">{item.subtitle}</p>
+      </div>
+      <div className="shrink-0 flex flex-col items-end gap-1">
+        {item.badge && (
+          <span className={`rounded-full ${item.badgeColor} px-2 py-0.5 text-xs font-semibold`}>
+            {item.badge}
+          </span>
+        )}
+        <span className="text-xs text-secondary-400">{item.time}</span>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main Profile Component ──────────────────────────────── */
 function Profile() {
-  const user = {
-    name: "Traveler",
-    email: "traveler@example.com",
-    joined: "July 2026",
-    travelStyle: "Luxury",
-    preferredTransport: "Flight",
-    budget: "Medium",
-    trips: 12,
-    countries: 7,
-    days: 48,
-  };
+  const [user, setUser] = useState(INITIAL_USER);
+  const [isEditing, setIsEditing] = useState(false);
+
+  function handleSave(updates) {
+    setUser((prev) => ({ ...prev, ...updates }));
+  }
+
+  const prefKeys = ["travelStyle", "preferredTransport", "budget", "favoriteDestination"];
 
   return (
     <DashboardLayout>
-      {/* Hero */}
+      {/* ── Hero ──────────────────────────────────────────── */}
+      <section
+        aria-label="Profile hero"
+        className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-sky-700 via-primary-600 to-cyan-500 p-6 text-white shadow-xl sm:mb-10 sm:rounded-3xl sm:p-8 lg:p-10"
+      >
+        {/* Decorative blobs */}
+        <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-8 left-1/2 h-32 w-64 rounded-full bg-cyan-300/20 blur-2xl" />
 
-      <section className="mb-10 rounded-3xl bg-gradient-to-br from-sky-600 via-sky-500 to-cyan-500 p-8 text-white shadow-xl">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-6">
-            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white/20 backdrop-blur">
-              <User size={42} />
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          {/* Left: Avatar + Info */}
+          <div className="flex items-end gap-5 sm:gap-6">
+            {/* Avatar ring */}
+            <div className="relative shrink-0">
+              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 ring-4 ring-white/30 backdrop-blur-sm sm:h-24 sm:w-24 sm:rounded-3xl">
+                <User size={44} className="text-white" aria-hidden="true" />
+              </div>
+              {/* Online dot */}
+              <span
+                aria-label="Online"
+                className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white bg-emerald-400"
+              />
             </div>
 
-            <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 backdrop-blur">
-                <Sparkles size={16} />
-                <span className="text-sm font-medium">
-                  AI Travel Explorer
-                </span>
+            <div className="min-w-0">
+              {/* Badge */}
+              <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-sm ring-1 ring-white/20">
+                <Sparkles size={12} aria-hidden="true" />
+                Itinera Explorer
               </div>
 
-              <h1 className="text-4xl font-bold">
+              <h1 className="break-words text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
                 {user.name}
               </h1>
 
-              <p className="mt-2 text-sky-100">
-                {user.email}
+              <p className="mt-1 text-sm text-sky-100 sm:text-base">{user.bio}</p>
+
+              {/* Meta chips */}
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-sky-100">
+                <span className="flex items-center gap-1">
+                  <Mail size={12} aria-hidden="true" />
+                  {user.email}
+                </span>
+                <span className="h-1 w-1 rounded-full bg-sky-300" />
+                <span className="flex items-center gap-1">
+                  <Clock size={12} aria-hidden="true" />
+                  Member since {user.joined}
+                </span>
+                <span className="h-1 w-1 rounded-full bg-sky-300" />
+                <span className="flex items-center gap-1">
+                  <Shield size={12} aria-hidden="true" />
+                  <span className="rounded-full bg-emerald-400/30 px-2 py-0.5 text-emerald-100 ring-1 ring-emerald-300/30">
+                    Active
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Actions */}
+          <div className="flex flex-wrap gap-3 lg:shrink-0">
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={() => setIsEditing(true)}
+              aria-label="Open edit profile modal"
+              className="gap-2 border-white/30 bg-white/15 text-white backdrop-blur-sm hover:bg-white/25"
+            >
+              <Settings size={16} aria-hidden="true" />
+              Edit Profile
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Stats ─────────────────────────────────────────── */}
+      <section aria-label="Travel statistics" className="mb-8 grid gap-4 sm:gap-5 md:grid-cols-3">
+        <ProfileStatCard
+          icon={Plane}
+          value={user.trips}
+          label="Trips Planned"
+          color="bg-primary-100 text-primary-700"
+          gradient="from-primary-50 via-white to-white"
+          trend="+3 this year"
+        />
+        <ProfileStatCard
+          icon={MapPin}
+          value={user.countries}
+          label="Countries Visited"
+          color="bg-accent-100 text-accent-700"
+          gradient="from-cyan-50 via-white to-white"
+          trend="+2 new"
+        />
+        <ProfileStatCard
+          icon={CalendarDays}
+          value={user.days}
+          label="Travel Days"
+          color="bg-success-100 text-success-700"
+          gradient="from-emerald-50 via-white to-white"
+          trend="+12 days"
+        />
+      </section>
+
+      {/* ── Bottom Grid ───────────────────────────────────── */}
+      <div className="grid gap-6 lg:grid-cols-2">
+
+        {/* ── Travel Preferences ────────────────────────── */}
+        <section
+          aria-label="Travel preferences"
+          className="rounded-2xl border border-secondary-100 bg-white p-5 shadow-card sm:rounded-3xl sm:p-6"
+        >
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-secondary-900">Travel Preferences</h2>
+              <p className="mt-0.5 text-xs text-secondary-400">Your personalised travel profile</p>
+            </div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+              <Compass size={17} aria-hidden="true" />
+            </div>
+          </div>
+
+          {/* Preference cards */}
+          <div className="space-y-2.5">
+            {prefKeys.map((key) => {
+              const meta = PREF_META[key];
+              if (!meta) return null;
+              return (
+                <PrefCard
+                  key={key}
+                  icon={meta.icon}
+                  label={meta.label}
+                  value={user[key] || "—"}
+                  color={meta.color}
+                  gradient={meta.gradient}
+                />
+              );
+            })}
+          </div>
+
+          {/* Interests */}
+          <div className="mt-5 border-t border-secondary-100 pt-5">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-secondary-400">
+              Interests
+            </p>
+            {user.interests && user.interests.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {user.interests.map((tag) => (
+                  <InterestChip key={tag} label={tag} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-secondary-400 italic">No interests added yet.</p>
+            )}
+          </div>
+        </section>
+
+        {/* ── Recent Activity ────────────────────────────── */}
+        <section
+          aria-label="Recent activity"
+          className="rounded-2xl border border-secondary-100 bg-white p-5 shadow-card sm:rounded-3xl sm:p-6"
+        >
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-secondary-900">Recent Activity</h2>
+              <p className="mt-0.5 text-xs text-secondary-400">Your latest travel moments</p>
+            </div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-50 text-accent-600">
+              <Clock size={17} aria-hidden="true" />
+            </div>
+          </div>
+
+          {RECENT_ACTIVITY.length > 0 ? (
+            <ul role="list" className="divide-y divide-secondary-50">
+              {RECENT_ACTIVITY.map((item) => (
+                <li key={item.id}>
+                  <ActivityItem item={item} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            /* Empty state */
+            <div className="flex flex-col items-center justify-center rounded-2xl bg-secondary-50 py-10 text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary-100 text-secondary-400">
+                <Globe size={24} aria-hidden="true" />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-secondary-600">No activity yet</p>
+              <p className="mt-1 text-xs text-secondary-400">
+                Start planning a trip to see your activity here.
               </p>
             </div>
-          </div>
+          )}
 
-          <Button>
-            <Settings size={18} />
-            Edit Profile
-          </Button>
-        </div>
-      </section>
+          {/* View all */}
+          <button
+            className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-semibold text-primary-600 transition-all duration-150 hover:bg-primary-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-400"
+            aria-label="View all activity"
+          >
+            View all activity
+            <ChevronRight size={14} />
+          </button>
+        </section>
+      </div>
 
-      {/* Stats */}
+      {/* ── Edit Modal ────────────────────────────────────── */}
+      {isEditing && (
+        <EditProfileModal
+          user={user}
+          onClose={() => setIsEditing(false)}
+          onSave={handleSave}
+        />
+      )}
 
-      <section className="mb-10 grid gap-6 md:grid-cols-3">
-
-        <div className="rounded-3xl border border-secondary-200 bg-white p-6 shadow-card">
-          <Plane className="text-primary-600" size={28} />
-          <h2 className="mt-4 text-3xl font-bold">
-            {user.trips}
-          </h2>
-          <p className="mt-2 text-secondary-500">
-            Trips Planned
-          </p>
-        </div>
-
-        <div className="rounded-3xl border border-secondary-200 bg-white p-6 shadow-card">
-          <MapPin className="text-primary-600" size={28} />
-          <h2 className="mt-4 text-3xl font-bold">
-            {user.countries}
-          </h2>
-          <p className="mt-2 text-secondary-500">
-            Destinations
-          </p>
-        </div>
-
-        <div className="rounded-3xl border border-secondary-200 bg-white p-6 shadow-card">
-          <CalendarDays className="text-primary-600" size={28} />
-          <h2 className="mt-4 text-3xl font-bold">
-            {user.days}
-          </h2>
-          <p className="mt-2 text-secondary-500">
-            Travel Days
-          </p>
-        </div>
-
-      </section>
-
-      {/* Preferences */}
-
-      <section className="grid gap-8 lg:grid-cols-2">
-
-        <div className="rounded-3xl border border-secondary-200 bg-white p-8 shadow-card">
-          <h2 className="text-2xl font-bold text-secondary-900">
-            Travel Preferences
-          </h2>
-
-          <div className="mt-8 space-y-6">
-
-            <div className="flex items-center justify-between border-b border-secondary-100 pb-4">
-              <span className="flex items-center gap-3 text-secondary-600">
-                <Compass size={18} />
-                Travel Style
-              </span>
-
-              <span className="font-semibold">
-                {user.travelStyle}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between border-b border-secondary-100 pb-4">
-              <span className="flex items-center gap-3 text-secondary-600">
-                <Plane size={18} />
-                Transport
-              </span>
-
-              <span className="font-semibold">
-                {user.preferredTransport}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-3 text-secondary-600">
-                <Wallet size={18} />
-                Budget
-              </span>
-
-              <span className="font-semibold">
-                {user.budget}
-              </span>
-            </div>
-
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-secondary-200 bg-white p-8 shadow-card">
-          <h2 className="text-2xl font-bold text-secondary-900">
-            Account
-          </h2>
-
-          <div className="mt-8 space-y-6">
-
-            <div className="flex justify-between border-b border-secondary-100 pb-4">
-              <span className="text-secondary-600">
-                Member Since
-              </span>
-
-              <span className="font-semibold">
-                {user.joined}
-              </span>
-            </div>
-
-            <div className="flex justify-between border-b border-secondary-100 pb-4">
-              <span className="text-secondary-600">
-                Email
-              </span>
-
-              <span className="font-semibold break-all">
-                {user.email}
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="text-secondary-600">
-                Account Status
-              </span>
-
-              <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-700">
-                Active
-              </span>
-            </div>
-
-          </div>
-        </div>
-
-      </section>
+      {/* slideUpIn keyframe (inline so no extra file) */}
+      <style>{`
+        @keyframes slideUpIn {
+          from { opacity: 0; transform: translateY(40px) scale(0.97); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
     </DashboardLayout>
   );
 }

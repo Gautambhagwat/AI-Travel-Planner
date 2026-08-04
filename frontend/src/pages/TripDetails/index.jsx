@@ -75,7 +75,7 @@ function TripDetails() {
       <TripSummary trip={trip} />
 
       {/* Action Bar */}
-      <section className="mb-10 rounded-3xl border border-secondary-200 bg-white p-5 shadow-card">
+      <section className="mb-8 rounded-2xl border border-secondary-200 bg-white p-4 shadow-card sm:mb-10 sm:rounded-3xl sm:p-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
           <div>
@@ -88,7 +88,7 @@ function TripDetails() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             {!savedTrip ? (
               <Button onClick={handleSave}>
                 Save Trip
@@ -97,6 +97,7 @@ function TripDetails() {
               <>
                 <Button
                   variant="secondary"
+                  className="w-full sm:w-auto"
                   onClick={handleDuplicate}
                 >
                   Duplicate Trip
@@ -104,6 +105,7 @@ function TripDetails() {
 
                 <Button
                   variant="danger"
+                  className="w-full sm:w-auto"
                   onClick={() =>
                     setIsDeleteModalOpen(true)
                   }
@@ -147,14 +149,14 @@ function TripDetails() {
 
       <section className="space-y-8">
 
-        <div className="flex items-end justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
 
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-primary-600">
               Daily Plan
             </p>
 
-            <h2 className="mt-2 text-3xl font-bold text-secondary-900">
+            <h2 className="mt-2 text-2xl font-bold text-secondary-900 sm:text-3xl">
               Your Journey
             </h2>
 
@@ -194,7 +196,7 @@ function TripDetails() {
           from your saved trips.
         </p>
 
-        <div className="mt-8 flex justify-end gap-3">
+        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
 
           <Button
             variant="secondary"

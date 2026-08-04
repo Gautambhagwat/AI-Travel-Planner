@@ -1,10 +1,12 @@
-import { Compass, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
+
+import BrandLogo from "../common/BrandLogo";
 
 function AuthLayout({ title, subtitle, children }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-cyan-50">
 
-      <div className="mx-auto flex min-h-screen max-w-7xl items-center px-6 py-10">
+      <div className="mx-auto flex min-h-screen max-w-7xl items-center px-4 py-6 sm:px-6 sm:py-10">
 
         {/* Left Side */}
 
@@ -61,15 +63,15 @@ function AuthLayout({ title, subtitle, children }) {
 
         <div className="w-full lg:max-w-lg">
 
-          <div className="rounded-3xl border border-secondary-200 bg-white p-10 shadow-2xl">
+          <div className="rounded-2xl border border-secondary-200 bg-white p-5 shadow-2xl sm:rounded-3xl sm:p-8 lg:p-10">
 
             <div className="mb-8 text-center">
 
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 text-primary-600">
-                <Compass size={36} />
+              <div className="mb-6 flex justify-center">
+                <BrandLogo variant="full" size="lg" />
               </div>
 
-              <h2 className="text-4xl font-bold text-secondary-900">
+              <h2 className="text-3xl font-bold text-secondary-900 sm:text-4xl">
                 {title}
               </h2>
 
