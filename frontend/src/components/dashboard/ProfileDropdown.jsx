@@ -122,8 +122,8 @@ function ProfileDropdown() {
         aria-controls="profile-menu"
         aria-label={`Account menu for ${displayName}`}
         className={cn(
-          "flex items-center gap-2 rounded-xl px-1 py-1 pr-2 transition-all duration-200",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-1",
+          "flex items-center gap-2 rounded-xl px-1.5 py-1 transition-all duration-200",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1",
           open
             ? "bg-primary-50 ring-2 ring-primary-200"
             : "hover:bg-secondary-100",
@@ -137,7 +137,7 @@ function ProfileDropdown() {
           size={14}
           className={cn(
             "hidden text-secondary-400 transition-transform duration-200 sm:block",
-            open && "rotate-180 text-primary-500",
+            open && "rotate-180 text-primary-600",
           )}
           aria-hidden="true"
         />
@@ -151,26 +151,26 @@ function ProfileDropdown() {
           aria-labelledby="profile-menu-trigger"
           className={cn(
             // Positioning
-            "absolute right-0 top-[calc(100%+10px)] z-50",
+            "absolute right-0 top-[calc(100%+8px)] z-50",
             // Sizing
-            "w-64",
+            "w-60 sm:w-64",
             // Appearance
-            "overflow-hidden rounded-2xl border border-secondary-200/70 bg-white",
+            "overflow-hidden rounded-2xl border border-secondary-200/80 bg-white",
             // Premium shadow
-            "shadow-[0_8px_30px_rgb(15,23,42,0.12),0_2px_8px_rgb(15,23,42,0.08)]",
+            "shadow-xl",
             // Animation
             "animate-dropdown",
           )}
         >
 
           {/* ── User identity header ── */}
-          <div className="flex items-center gap-3 border-b border-secondary-100 bg-gradient-to-br from-primary-50/60 to-sky-50/40 px-4 py-4">
+          <div className="flex items-center gap-3 border-b border-secondary-100 bg-gradient-to-br from-primary-50/60 to-sky-50/40 px-4 py-3.5">
 
             {/* Larger avatar in header */}
             <Avatar name={displayName} size="md" />
 
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-secondary-900">
+              <p className="truncate text-sm font-bold text-secondary-900">
                 {displayName}
               </p>
               <p className="truncate text-xs text-secondary-500 mt-0.5">
@@ -195,15 +195,15 @@ function ProfileDropdown() {
                   onKeyDown={(e) => handleMenuKeyDown(e, () => handleNavigate(item.path))}
                   tabIndex={0}
                   className={cn(
-                    "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm",
+                    "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium",
                     "text-secondary-700 transition-all duration-150",
                     "hover:bg-primary-50 hover:text-primary-700",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-inset",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-inset",
                   )}
                 >
                   <Icon
                     size={16}
-                    className="shrink-0 text-secondary-400 transition-colors group-hover:text-primary-500"
+                    className="shrink-0 text-secondary-400"
                     aria-hidden="true"
                   />
                   <span>{item.label}</span>
@@ -225,10 +225,10 @@ function ProfileDropdown() {
               onKeyDown={(e) => handleMenuKeyDown(e, handleLogout)}
               tabIndex={0}
               className={cn(
-                "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm",
+                "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium",
                 "text-error-600 transition-all duration-150",
                 "hover:bg-error-50 hover:text-error-700",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error-300 focus-visible:ring-inset",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error-400 focus-visible:ring-inset",
               )}
             >
               <LogOut

@@ -42,7 +42,7 @@ function Footer() {
   return (
     <footer className="border-t border-secondary-800 bg-secondary-900 text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 xl:px-10">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
 
           {/* Brand */}
           <div className="space-y-4">
@@ -64,35 +64,35 @@ function Footer() {
             <div className="flex flex-col gap-2.5 text-sm font-medium text-secondary-300">
               <Link
                 to="/"
-                className="transition hover:text-primary-400"
+                className="transition hover:text-primary-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 rounded"
               >
                 Home
               </Link>
 
               <Link
                 to="/planner"
-                className="transition hover:text-primary-400"
+                className="transition hover:text-primary-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 rounded"
               >
                 AI Planner
               </Link>
 
               <Link
                 to="/saved-trips"
-                className="transition hover:text-primary-400"
+                className="transition hover:text-primary-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 rounded"
               >
                 Saved Trips
               </Link>
 
               <Link
                 to="/profile"
-                className="transition hover:text-primary-400"
+                className="transition hover:text-primary-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 rounded"
               >
                 Profile
               </Link>
 
               <Link
                 to="/login"
-                className="transition hover:text-primary-400"
+                className="transition hover:text-primary-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 rounded"
               >
                 Login
               </Link>
@@ -109,7 +109,8 @@ function Footer() {
               <div className="flex items-center gap-3">
                 <Mail
                   size={16}
-                  className="text-primary-400 flex-shrink-0"
+                  className="text-primary-400 shrink-0"
+                  aria-hidden="true"
                 />
                 <span>
                   support@aitravel.com
@@ -119,7 +120,8 @@ function Footer() {
               <div className="flex items-center gap-3">
                 <Phone
                   size={16}
-                  className="text-primary-400 flex-shrink-0"
+                  className="text-primary-400 shrink-0"
+                  aria-hidden="true"
                 />
                 <span>
                   +91 98765 43210
@@ -129,7 +131,8 @@ function Footer() {
               <div className="flex items-center gap-3">
                 <MapPin
                   size={16}
-                  className="text-primary-400 flex-shrink-0"
+                  className="text-primary-400 shrink-0"
+                  aria-hidden="true"
                 />
                 <span>
                   Pune, India
@@ -151,7 +154,7 @@ function Footer() {
 
             {subscribed ? (
               <div className="flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-emerald-900/40 px-4 py-3 text-sm font-medium text-emerald-300">
-                <CheckCircle size={18} className="flex-shrink-0 text-emerald-400" />
+                <CheckCircle size={18} className="shrink-0 text-emerald-400" aria-hidden="true" />
                 <span>You&apos;re subscribed! Welcome aboard. 🎉</span>
               </div>
             ) : (
@@ -166,7 +169,7 @@ function Footer() {
                     }}
                     placeholder="Your email"
                     aria-label="Email address for newsletter"
-                    className="min-w-0 flex-1 rounded-l-xl border border-secondary-700 bg-secondary-800 px-3.5 py-2.5 text-sm text-white outline-none placeholder:text-secondary-500 focus:border-primary-500 transition-colors"
+                    className="min-w-0 flex-1 rounded-l-xl border border-secondary-700 bg-secondary-800 px-3.5 py-2.5 text-sm text-white outline-none placeholder:text-secondary-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
                   />
 
                   <button
@@ -174,12 +177,12 @@ function Footer() {
                     aria-label="Subscribe to newsletter"
                     className="rounded-r-xl bg-primary-600 px-3.5 text-white transition-colors hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400"
                   >
-                    <ArrowUpRight size={18} />
+                    <ArrowUpRight size={18} aria-hidden="true" />
                   </button>
                 </div>
 
                 {error && (
-                  <p className="mt-2 text-xs text-red-400">{error}</p>
+                  <p className="mt-2 text-xs text-error-400">{error}</p>
                 )}
               </form>
             )}
@@ -201,7 +204,7 @@ function Footer() {
               aria-label="Follow us on X (Twitter)"
               className="rounded-lg bg-secondary-800 p-2.5 text-secondary-400 transition-all hover:bg-primary-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-400"
             >
-              <Share2 size={18} />
+              <Share2 size={18} aria-hidden="true" />
             </a>
 
             <a
@@ -211,7 +214,7 @@ function Footer() {
               aria-label="Follow us on Instagram"
               className="rounded-lg bg-secondary-800 p-2.5 text-secondary-400 transition-all hover:bg-primary-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-400"
             >
-              <Globe size={18} />
+              <Globe size={18} aria-hidden="true" />
             </a>
 
             <a
@@ -221,7 +224,7 @@ function Footer() {
               aria-label="Connect on LinkedIn"
               className="rounded-lg bg-secondary-800 p-2.5 text-secondary-400 transition-all hover:bg-primary-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-400"
             >
-              <Compass size={18} />
+              <Compass size={18} aria-hidden="true" />
             </a>
 
             <a
@@ -229,7 +232,7 @@ function Footer() {
               aria-label="Email us"
               className="rounded-lg bg-secondary-800 p-2.5 text-secondary-400 transition-all hover:bg-primary-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-400"
             >
-              <MessageSquare size={18} />
+              <MessageSquare size={18} aria-hidden="true" />
             </a>
           </div>
         </div>
