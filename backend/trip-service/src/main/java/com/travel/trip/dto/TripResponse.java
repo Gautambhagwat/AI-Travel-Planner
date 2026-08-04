@@ -11,6 +11,7 @@ public class TripResponse {
     private Integer numberOfPeople;
     private Double totalPrice;
     private String status;
+    private String aiRecommendation;
 
     public TripResponse() {
     }
@@ -85,5 +86,13 @@ public class TripResponse {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getAiRecommendation() {
+        return aiRecommendation;
+    }
+
+    public void setAiRecommendation(String aiRecommendation) {
+        this.aiRecommendation = aiRecommendation;
     }
 }

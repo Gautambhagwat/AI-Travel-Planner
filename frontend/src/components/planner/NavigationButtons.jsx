@@ -1,21 +1,15 @@
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import Button from "../common/Button";
-
 import usePlanner from "../../hooks/usePlanner";
-import useItinerary from "../../hooks/useItinerary";
-
-import { generateTrip } from "../../services/plannerService";
-import { createTrip } from "../../services/tripService";
+import { generateAndSaveTrip } from "../../services/plannerService";
 
 function NavigationButtons() {
   const [isGenerating, setIsGenerating] = useState(false);
-
   const navigate = useNavigate();
-
-  const { setItinerary } = useItinerary();
 
   const {
     step,
@@ -26,132 +20,73 @@ function NavigationButtons() {
   } = usePlanner();
 
   const handleGenerate = async () => {
-
-    if (!validateStep(8)) return;
-
+    if (!validateStep(8)) {
+      toast.error("Please complete all required fields before generating.");
+      return;
+    }
 
     setIsGenerating(true);
 
-
     try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user?.id) {
+        throw new Error("User session expired. Please log in again.");
+      }
 
-      // Generate AI itinerary
-      const itinerary = await generateTrip(tripData);
-
-
-      setItinerary(itinerary);
-
-
-
-      // Get logged-in user
-      const user = JSON.parse(
-          localStorage.getItem("user")
-      );
-
-
-
-      // Save trip into database
-      const tripPayload = {
-
-        userId: user.id,
-
-        destinationId: null,
-
-        tripName:
-            `${tripData.destination} Trip`,
-
-        startDate:
-        tripData.startDate,
-
-        endDate:
-            tripData.endDate,
-
-        numberOfPeople:
-        tripData.travelers,
-
-        totalPrice:
-            Number(tripData.budget),
-
-        status:
-            "PLANNED"
-
-      };
-
-
-
-      const savedTrip = await createTrip(tripPayload);
-
-
-      console.log(
-          "Trip saved:",
-          savedTrip
-      );
-
-      setItinerary({
-        ...itinerary,
-        tripId: savedTrip.id
-      });
-
-
-      navigate(
-          `/trip-details/${savedTrip.id}`
-      );
-
-
-    }  catch(error){
-
-      console.error(
-          "Trip generation failed:",
-          error
-      );
-
+      // Single pipeline execution: AI Generation -> Trip Service Save -> Database
+      const savedTrip = await generateAndSaveTrip(tripData, user.id);
+      toast.success("AI Trip generated successfully!");
+      navigate(`/trip-details/${savedTrip.id}`);
+    } catch (error) {
+      console.error("Trip generation failed:", error);
+      toast.error(error.message || "Failed to generate AI trip. Please try again.");
     } finally {
-
       setIsGenerating(false);
-
     }
-
   };
 
   return (
     <div className="mt-12 flex flex-col-reverse gap-4 border-t border-secondary-200 pt-8 sm:flex-row sm:items-center sm:justify-between">
-
       <div>
         {step > 1 && (
           <Button
             variant="outline"
             onClick={previousStep}
+            disabled={isGenerating}
           >
             <ArrowLeft size={18} />
-
             Previous
           </Button>
         )}
       </div>
 
       <div>
-        {step < 8 && (
-          <Button onClick={nextStep}>
+        {step < 9 && (
+          <Button onClick={nextStep} disabled={isGenerating}>
             Next
-
             <ArrowRight size={18} />
           </Button>
         )}
 
-        {step === 8 && (
+        {step === 9 && (
           <Button
             onClick={handleGenerate}
             disabled={isGenerating}
           >
-            <Sparkles size={18} />
-
-            {isGenerating
-              ? "Generating AI Itinerary..."
-              : "Generate AI Trip"}
+            {isGenerating ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                Generating AI Itinerary...
+              </>
+            ) : (
+              <>
+                <Sparkles size={18} />
+                Generate AI Trip
+              </>
+            )}
           </Button>
         )}
       </div>
-
     </div>
   );
 }

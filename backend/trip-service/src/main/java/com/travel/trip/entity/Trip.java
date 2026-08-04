@@ -23,6 +23,9 @@ public class Trip {
     private Double totalPrice;
     private String status;
 
+    @jakarta.persistence.Column(columnDefinition = "TEXT")
+    private String aiRecommendation;
+
     public Trip() {
     }
 
@@ -110,5 +113,13 @@ public class Trip {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getAiRecommendation() {
+        return aiRecommendation;
+    }
+
+    public void setAiRecommendation(String aiRecommendation) {
+        this.aiRecommendation = aiRecommendation;
     }
 }

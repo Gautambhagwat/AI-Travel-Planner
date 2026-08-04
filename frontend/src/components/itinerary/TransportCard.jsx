@@ -14,9 +14,12 @@ const icons = {
   Car: Car,
 };
 
-function TransportCard() {
-  const Icon = Route;
-  const transport = "Not Added";
+function TransportCard(summary) {
+  const transport = summary?.transport || "Taxi";
+
+  const Icon =
+      icons[transport] ||
+      (transport.toLowerCase().includes("taxi") ? Car : Route);
 
   return (
     <div className="rounded-3xl border border-secondary-200 bg-white p-7 shadow-card">

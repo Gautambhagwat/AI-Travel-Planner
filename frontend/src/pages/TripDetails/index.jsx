@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+import AIItinerary from "../../components/itinerary/AIItinerary";
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import Button from "../../components/common/Button";
 import Modal from "../../components/common/Model";
@@ -8,7 +9,7 @@ import Modal from "../../components/common/Model";
 import TripSummary from "../../components/itinerary/TripSummary";
 import BudgetCard from "../../components/itinerary/BudgetCard";
 import HotelCard from "../../components/itinerary/HotelCard";
-import TransportCard from "../../components/itinerary/TransportCard";
+import TravelGuideCard from "../../components/itinerary/TravelGuideCard";
 import EmptyItinerary from "../../components/itinerary/EmptyItinerary";
 
 import {
@@ -16,275 +17,148 @@ import {
   deleteTrip,
 } from "../../services/tripService";
 
-
 function TripDetails() {
-
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-  const { id } = useParams();
-
-  const navigate = useNavigate();
-
-
   const [trip, setTrip] = useState(null);
 
-
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-
     async function loadTrip() {
-
       try {
+        const response = await getTripById(id);
 
-        const response =
-            await getTripById(id);
-
-
-        console.log(
-            "Trip details:",
-            response
-        );
-
+        console.log("Trip details:", response);
 
         setTrip(response);
-
-
-      } catch(error) {
-
-        console.error(
-            "Failed loading trip",
-            error
-        );
-
+      } catch (error) {
+        console.error("Failed loading trip", error);
       }
-
     }
 
-
-    if(id){
+    if (id) {
       loadTrip();
     }
-
-
-  },[id]);
-
-
-
+  }, [id]);
 
   const handleDelete = async () => {
-
     try {
-
       await deleteTrip(trip.id);
-
 
       setIsDeleteModalOpen(false);
 
-
       navigate("/saved-trips");
-
-
-    } catch(error){
-
+    } catch (error) {
       console.error(error);
-
     }
-
   };
 
-
-
-
-  if(!trip){
-
+  if (!trip) {
     return (
-
         <DashboardLayout>
-
-          <EmptyItinerary/>
-
+          <EmptyItinerary />
         </DashboardLayout>
-
     );
-
   }
 
+  let itinerary = null;
 
-
+  try {
+    itinerary = trip.aiRecommendation
+        ? JSON.parse(trip.aiRecommendation)
+        : null;
+  } catch (error) {
+    console.error("Invalid AI recommendation JSON", error);
+  }
 
   return (
-
       <DashboardLayout>
 
-
         {/* Hero */}
-
-        <TripSummary
-            trip={trip}
-        />
-
-
+        <TripSummary trip={trip} />
 
         {/* Manage Trip */}
-
         <section className="mb-10 rounded-3xl border border-secondary-200 bg-white p-5 shadow-card">
-
-
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-
-
             <div>
-
               <h2 className="text-xl font-semibold">
                 Manage Trip
               </h2>
 
-
               <p className="text-sm text-secondary-500">
                 View or remove your saved trip.
               </p>
-
-
             </div>
-
-
 
             <Button
                 variant="danger"
-                onClick={() =>
-                    setIsDeleteModalOpen(true)
-                }
+                onClick={() => setIsDeleteModalOpen(true)}
             >
               Delete Trip
             </Button>
-
-
           </div>
-
-
         </section>
 
-
-
-
+        {/* AI Itinerary */}
+        <AIItinerary
+            aiRecommendation={itinerary}
+        />
 
         {/* Summary Cards */}
-
-
         <section className="mb-10">
-
-
           <div className="grid gap-6 lg:grid-cols-2">
-
-
             <BudgetCard
                 totalCost={trip.totalPrice}
             />
 
-
-
-            <HotelCard/>
-
+            <HotelCard
+                accommodation={itinerary?.summary}
+            />
           </div>
-
-
         </section>
 
-
-
-
-
-        {/* Transport */}
-
-
+        {/* AI Travel Guide */}
         <section className="mb-10">
-
-          <TransportCard/>
-
+          <TravelGuideCard
+              summary={itinerary?.summary}
+          />
         </section>
-
-
-
-
-
 
         {/* Delete Modal */}
-
-
         <Modal
-
             isOpen={isDeleteModalOpen}
-
             title="Delete trip?"
-
-            onClose={() =>
-                setIsDeleteModalOpen(false)
-            }
-
+            onClose={() => setIsDeleteModalOpen(false)}
         >
-
           <p className="text-secondary-600">
-
             Are you sure you want to delete
-
             <span className="font-semibold">
-
             {" "}
               {trip.tripName}
-
           </span>
-
             ?
-
           </p>
 
-
-
           <div className="mt-8 flex justify-end gap-3">
-
-
             <Button
-
                 variant="secondary"
-
-                onClick={() =>
-                    setIsDeleteModalOpen(false)
-                }
-
+                onClick={() => setIsDeleteModalOpen(false)}
             >
-
               Cancel
-
             </Button>
-
-
 
             <Button
-
                 variant="danger"
-
                 onClick={handleDelete}
-
             >
-
               Delete
-
             </Button>
-
-
-
           </div>
-
-
         </Modal>
 
-
-
       </DashboardLayout>
-
   );
-
 }
-
 
 export default TripDetails;

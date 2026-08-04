@@ -7,10 +7,12 @@ import {
 } from "lucide-react";
 
 import Button from "../common/Button";
+import useAuth from "../../hooks/useAuth";
 
 function WelcomeBanner() {
-  const hour = new Date().getHours();
+  const { user } = useAuth();
 
+  const hour = new Date().getHours();
   let greeting = "Good Evening";
 
   if (hour < 12) {
@@ -26,9 +28,10 @@ function WelcomeBanner() {
     year: "numeric",
   });
 
+  const userName = user?.fullName || user?.username || "Explorer";
+
   return (
     <section className="relative mb-10 overflow-hidden rounded-3xl bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 p-8 text-white shadow-xl">
-
       {/* Decorative Background */}
       <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/10 blur-3xl"></div>
       <div className="absolute -bottom-20 left-0 h-56 w-56 rounded-full bg-white/10 blur-3xl"></div>
@@ -44,14 +47,14 @@ function WelcomeBanner() {
           </div>
 
           <h2 className="text-4xl font-bold lg:text-5xl">
-            {greeting}, Gautam 👋
+            {greeting}, {userName} 👋
           </h2>
 
           <p className="mt-4 max-w-xl text-lg text-primary-100">
-  Discover incredible destinations and let AI craft a
-  personalized itinerary based on your interests,
-  budget, and travel style.
-</p>
+            Discover incredible destinations and let AI craft a
+            personalized itinerary based on your interests,
+            budget, and travel style.
+          </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
 

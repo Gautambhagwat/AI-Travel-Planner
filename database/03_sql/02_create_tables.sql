@@ -47,7 +47,7 @@ CREATE TABLE trips (
 
     user_id BIGINT NOT NULL,
 
-    destination_id BIGINT NOT NULL,
+    destination_id BIGINT,
 
     trip_name VARCHAR(150) NOT NULL,
 
@@ -61,6 +61,8 @@ CREATE TABLE trips (
 
     status VARCHAR(30) DEFAULT 'PLANNED',
 
+    ai_recommendation TEXT,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -69,11 +71,7 @@ CREATE TABLE trips (
     CONSTRAINT fk_trip_user
         FOREIGN KEY(user_id)
         REFERENCES users(id)
-        ON DELETE CASCADE,
-
-    CONSTRAINT fk_trip_destination
-        FOREIGN KEY(destination_id)
-        REFERENCES destinations(id)
+        ON DELETE CASCADE
 );
 
 

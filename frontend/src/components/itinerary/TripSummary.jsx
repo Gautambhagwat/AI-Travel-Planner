@@ -110,17 +110,15 @@ function TripSummary({ trip }) {
 
 
             <div className="rounded-2xl bg-white/10 p-5">
-
-              <MapPin size={18}/>
+              <MapPin size={18} />
 
               <p className="mt-2 text-sm">
-                Destination ID
+                Destination
               </p>
 
               <h3 className="text-xl font-bold">
-                {trip.destinationId}
+                {trip.tripName.replace(" AI Trip", "")}
               </h3>
-
             </div>
 
 

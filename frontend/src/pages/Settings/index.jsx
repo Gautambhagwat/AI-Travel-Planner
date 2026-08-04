@@ -12,12 +12,16 @@ import {
 } from "lucide-react";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
+import useAuth from "../../hooks/useAuth";
 
 function Settings() {
+  const { user } = useAuth();
+  const userName = user?.fullName || user?.username || "Traveler";
+  const userEmail = user?.email || "traveler@example.com";
+
   return (
     <DashboardLayout>
       {/* Hero */}
-
       <section className="mb-10 rounded-3xl bg-gradient-to-br from-sky-600 via-sky-500 to-cyan-500 p-8 text-white shadow-xl">
         <div className="flex items-center gap-5">
           <div className="rounded-2xl bg-white/20 p-4 backdrop-blur">
@@ -44,9 +48,7 @@ function Settings() {
       </section>
 
       <div className="grid gap-8">
-
         {/* Account */}
-
         <section className="rounded-3xl border border-secondary-200 bg-white p-8 shadow-card">
           <div className="mb-6 flex items-center gap-3">
             <User className="text-primary-600" />
@@ -56,27 +58,24 @@ function Settings() {
           </div>
 
           <div className="space-y-5">
-
             <SettingRow
               title="Name"
-              value="Traveler"
+              value={userName}
             />
 
             <SettingRow
               title="Email"
-              value="traveler@example.com"
+              value={userEmail}
             />
 
             <SettingRow
               title="Password"
               value="••••••••"
             />
-
           </div>
         </section>
 
         {/* AI Preferences */}
-
         <section className="rounded-3xl border border-secondary-200 bg-white p-8 shadow-card">
           <div className="mb-6 flex items-center gap-3">
             <Plane className="text-primary-600" />
@@ -86,27 +85,24 @@ function Settings() {
           </div>
 
           <div className="space-y-5">
-
             <SettingRow
               title="Preferred Travel Style"
-              value="Luxury"
+              value="Balanced Explorer"
             />
 
             <SettingRow
               title="Preferred Transport"
-              value="Flight"
+              value="Flexible"
             />
 
             <SettingRow
               title="Default Budget"
-              value="Medium"
+              value="Standard"
             />
-
           </div>
         </section>
 
         {/* Notifications */}
-
         <section className="rounded-3xl border border-secondary-200 bg-white p-8 shadow-card">
           <div className="mb-6 flex items-center gap-3">
             <Bell className="text-primary-600" />
@@ -133,7 +129,6 @@ function Settings() {
         </section>
 
         {/* Appearance */}
-
         <section className="rounded-3xl border border-secondary-200 bg-white p-8 shadow-card">
           <div className="mb-6 flex items-center gap-3">
             <Moon className="text-primary-600" />
@@ -149,7 +144,6 @@ function Settings() {
         </section>
 
         {/* Privacy */}
-
         <section className="rounded-3xl border border-secondary-200 bg-white p-8 shadow-card">
           <div className="mb-6 flex items-center gap-3">
             <Shield className="text-primary-600" />
@@ -159,7 +153,6 @@ function Settings() {
           </div>
 
           <div className="space-y-5">
-
             <SettingRow
               title="Language"
               value="English"
@@ -174,13 +167,11 @@ function Settings() {
 
             <SettingRow
               title="Saved Trips"
-              value="Stored Locally"
+              value="Cloud Synchronized"
               icon={<Wallet size={18} />}
             />
-
           </div>
         </section>
-
       </div>
     </DashboardLayout>
   );
