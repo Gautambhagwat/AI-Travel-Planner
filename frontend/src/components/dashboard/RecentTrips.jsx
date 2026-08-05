@@ -36,7 +36,6 @@ function RecentTrips({ trips }) {
             type="button"
             onClick={() => navigate("/saved-trips")}
             className="self-start rounded-xl px-3 py-1.5 text-xs font-semibold text-primary-600 transition-colors hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 sm:self-auto sm:text-sm"
-            aria-label="View all saved trips"
           >
             View All
           </button>
@@ -48,7 +47,6 @@ function RecentTrips({ trips }) {
               <PlaneTakeoff
                 size={26}
                 className="text-primary-600"
-                aria-hidden="true"
               />
             </div>
 
@@ -64,7 +62,7 @@ function RecentTrips({ trips }) {
             <button
               type="button"
               onClick={() => navigate("/planner")}
-              className="mt-5 rounded-xl bg-primary-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-primary-500/20 transition-all duration-200 hover:bg-primary-700 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 sm:text-sm"
+              className="mt-5 rounded-xl bg-primary-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-primary-500/20 transition hover:bg-primary-700"
             >
               Plan My First Trip
             </button>
@@ -72,9 +70,20 @@ function RecentTrips({ trips }) {
         ) : (
           <div className="space-y-4">
             {trips.slice(0, 3).map((trip) => {
+              const destination =
+                trip.tripName?.replace(" AI Trip", "") ||
+                "Destination";
+
               const image =
-                destinationImages[trip.destination] ||
+                destinationImages[destination] ||
                 "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800";
+
+              const duration =
+                Math.ceil(
+                  (new Date(trip.endDate) -
+                    new Date(trip.startDate)) /
+                    (1000 * 60 * 60 * 24)
+                ) + 1;
 
               return (
                 <article
@@ -83,51 +92,56 @@ function RecentTrips({ trips }) {
                 >
                   <div className="flex flex-col sm:flex-row">
                     {/* Image */}
-                    <div className="relative h-40 overflow-hidden sm:h-auto sm:w-[180px] lg:w-[200px] shrink-0">
+                    <div className="relative h-40 shrink-0 overflow-hidden sm:h-auto sm:w-[180px] lg:w-[200px]">
                       <img
                         src={image}
-                        alt={trip.destination}
+                        alt={destination}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
                       <div className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[11px] font-bold text-secondary-900 shadow-xs backdrop-blur-sm">
-                        {trip.destination}
+                        {destination}
                       </div>
                     </div>
 
                     {/* Content */}
                     <div className="min-w-0 flex flex-1 flex-col justify-between p-4">
                       <div>
-                        <span className="inline-flex rounded-full bg-primary-50 px-2.5 py-0.5 text-[10px] font-bold text-primary-700 border border-primary-100">
+                        <span className="inline-flex rounded-full border border-primary-100 bg-primary-50 px-2.5 py-0.5 text-[10px] font-bold text-primary-700">
                           AI Generated
                         </span>
 
                         <h3 className="mt-1.5 break-words text-base font-bold text-secondary-900">
-                          {trip.tripTitle}
+                          {trip.tripName}
                         </h3>
 
                         <div className="mt-2 flex flex-wrap gap-3 text-xs text-secondary-500">
                           <div className="flex items-center gap-1.5">
-                            <MapPin size={14} className="text-secondary-400" aria-hidden="true" />
-                            {trip.destination}
+                            <MapPin
+                              size={14}
+                              className="text-secondary-400"
+                            />
+                            {destination}
                           </div>
 
                           <div className="flex items-center gap-1.5">
-                            <CalendarDays size={14} className="text-secondary-400" aria-hidden="true" />
-                            {trip.days.length}{" "}
-                            {trip.days.length > 1 ? "Days" : "Day"}
+                            <CalendarDays
+                              size={14}
+                              className="text-secondary-400"
+                            />
+                            {duration}{" "}
+                            {duration > 1 ? "Days" : "Day"}
                           </div>
                         </div>
                       </div>
 
                       <div className="mt-4 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="inline-flex items-center gap-2 rounded-xl bg-primary-50/80 border border-primary-100 px-3 py-1.5">
+                        <div className="inline-flex items-center gap-2 rounded-xl border border-primary-100 bg-primary-50/80 px-3 py-1.5">
                           <Wallet
                             size={16}
                             className="text-primary-600"
-                            aria-hidden="true"
                           />
 
                           <div>
@@ -136,7 +150,10 @@ function RecentTrips({ trips }) {
                             </p>
 
                             <p className="text-xs font-bold text-primary-700">
-                              ₹{trip.totalCost?.toLocaleString()}
+                              ₹
+                              {Number(
+                                trip.totalPrice || 0
+                              ).toLocaleString()}
                             </p>
                           </div>
                         </div>
@@ -144,13 +161,16 @@ function RecentTrips({ trips }) {
                         <button
                           type="button"
                           onClick={() =>
-                            navigate(`/trip-details/${trip.id}`)
+                            navigate(
+                              `/trip-details/${trip.id}`
+                            )
                           }
-                          className="flex items-center justify-center gap-1.5 rounded-xl bg-primary-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition-all duration-200 hover:bg-primary-700 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-                          aria-label={`Continue planning ${trip.tripTitle}`}
+                          className="flex items-center justify-center gap-1.5 rounded-xl bg-primary-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-primary-700"
+                          aria-label={`Continue planning ${trip.tripName}`}
                         >
                           <span>Continue</span>
-                          <ArrowRight size={14} aria-hidden="true" />
+
+                          <ArrowRight size={14} />
                         </button>
                       </div>
                     </div>
