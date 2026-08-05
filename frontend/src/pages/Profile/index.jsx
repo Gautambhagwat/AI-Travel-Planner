@@ -12,7 +12,6 @@ import {
   X,
   Globe,
   Clock,
-  Star,
   Zap,
   Camera,
   Mail,
@@ -23,7 +22,6 @@ import {
   Mountain,
   Utensils,
   Coffee,
-  Heart,
 } from "lucide-react";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";

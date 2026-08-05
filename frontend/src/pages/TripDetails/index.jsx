@@ -33,9 +33,6 @@ function TripDetails() {
     async function loadTrip() {
       try {
         const response = await getTripById(id);
-
-        console.log("Trip details:", response);
-
         setTrip(response);
 
 
