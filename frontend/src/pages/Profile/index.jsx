@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { updateUserByEmail } from "../../services/userService";
 import {
   User,
@@ -432,7 +433,7 @@ function ActivityItem({ item }) {
 /* ─── Main Profile Component ──────────────────────────────── */
 function Profile() {
   const { user: authUser } = useContext(AuthContext);
-
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [stats, setStats] = useState({ tripsPlanned: null, countriesVisited: null, travelDays: null, recentActivity: [] });
   const [isEditing, setIsEditing] = useState(false);
@@ -724,13 +725,14 @@ function Profile() {
           )}
 
           {stats.recentActivity.length > 0 && (
-            <button
-              className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-semibold text-primary-600 transition-all duration-150 hover:bg-primary-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-400"
-              aria-label="View all activity"
-            >
-              View all activity
-              <ChevronRight size={14} />
-            </button>
+              <button
+                  onClick={() => navigate("/saved-trips")}
+                  className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-semibold text-primary-600 transition-all duration-150 hover:bg-primary-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-400"
+                  aria-label="View all activity"
+              >
+                View all activity
+                <ChevronRight size={14} />
+              </button>
           )}
         </section>
       </div>

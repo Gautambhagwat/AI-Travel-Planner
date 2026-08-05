@@ -76,7 +76,6 @@ function MapCard({ location, itinerary }) {
                     }
                 }
 
-                console.log("ACTIVITY MARKERS:", markers);
 
                 setActivityMarkers(markers);
             } catch (error) {

@@ -17,7 +17,6 @@
 
 import { motion } from "framer-motion";
 import DayBadge from "./DayBadge.jsx";
-import AIOptimizationCard from "./AIOptimizationCard.jsx";
 import TimelineNode from "./TimelineNode.jsx";
 import ActivityCard from "./ActivityCard.jsx";
 import { getPeriodIcon, getPeriodColors } from "./getActivityIcon.js";
@@ -60,8 +59,6 @@ function DayTimeline({ dayData, index }) {
             </div>
           </div>
 
-          {/* Right: AI card */}
-          <AIOptimizationCard />
         </div>
 
         {/* ── Divider ── */}

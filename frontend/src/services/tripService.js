@@ -103,19 +103,36 @@ export async function getTripStats(userId) {
 
   const tripsPlanned = trips.length;
 
-  // Use unique destinationIds as a proxy for countries visited.
+  // Count unique destinations using the trip name.
+// Example:
+// "Goa Trip" -> Goa
+// "Kerala AI Trip" -> Kerala
+
   const countriesVisited = new Set(
-    trips.map((t) => t.destinationId).filter(Boolean)
+      trips
+          .map((trip) =>
+              trip.tripName
+                  ?.replace(" AI Trip", "")
+                  .replace(" Trip", "")
+                  .trim()
+          )
+          .filter(Boolean)
   ).size;
 
-  // Sum travel days from startDate → endDate across all trips.
   let travelDays = 0;
+
   for (const trip of trips) {
     if (trip.startDate && trip.endDate) {
-      const start = new Date(trip.startDate);
-      const end = new Date(trip.endDate);
-      const diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-      if (diff > 0) travelDays += diff;
+      const start = new Date(`${trip.startDate}T00:00:00`);
+      const end = new Date(`${trip.endDate}T00:00:00`);
+
+      const days =
+          Math.max(
+              1,
+              Math.round((end - start) / 86400000) + 1
+          );
+
+      travelDays += days;
     }
   }
 

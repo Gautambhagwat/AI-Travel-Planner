@@ -35,9 +35,16 @@ function Dashboard() {
     0
   );
 
-  const destinations = new Set(
-    trips.map((trip) => trip.destinationId)
-  ).size;
+    const destinations = new Set(
+        trips
+            .map((trip) =>
+                trip.tripName
+                    ?.replace(" AI Trip", "")
+                    ?.replace(" Trip", "")
+                    ?.trim()
+            )
+            .filter(Boolean)
+    ).size;
 
   const formattedCost = new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -67,7 +74,7 @@ function Dashboard() {
         className="grid gap-6 lg:grid-cols-2"
       >
         <RecentTrips trips={trips} />
-        <AIRecommendations />
+          <AIRecommendations trips={trips} />
       </section>
     </DashboardLayout>
   );

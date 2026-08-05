@@ -24,19 +24,13 @@ export async function generateAndSaveTrip(tripData, userId) {
     interests: tripData.interests?.length ? tripData.interests : ["Sightseeing"],
   };
 
-  console.log(
-      "AI REQUEST BODY:",
-      JSON.stringify(aiRequest,null,2)
-  );
+
 
   let aiRecommendation = "";
 
   try {
     const aiResponse = await api.post("/api/ai/recommend", aiRequest);
-    console.log(
-        "AI RESPONSE:",
-        aiResponse.data.aiRecommendation
-    );
+
 
 
     aiRecommendation =
@@ -50,7 +44,7 @@ export async function generateAndSaveTrip(tripData, userId) {
   const tripPayload = {
     userId: Number(userId),
     destinationId: null,
-    tripName: `${tripData.destination} AI Trip`,
+    tripName: `${tripData.destination} Trip`,
     startDate: tripData.startDate,
     endDate: tripData.endDate,
     numberOfPeople: Number(tripData.travelers) || 1,
@@ -69,7 +63,7 @@ export async function generateTrip(tripData) {
 
   return {
     id: crypto.randomUUID(),
-    tripTitle: `${tripData.destination} AI Trip`,
+    tripTitle: `${tripData.destination} Trip`,
     destination: tripData.destination,
     startDate: tripData.startDate,
     endDate: tripData.endDate,

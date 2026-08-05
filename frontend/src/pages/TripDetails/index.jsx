@@ -23,9 +23,6 @@ function TripDetails() {
   const [trip, setTrip] = useState(null);
   const [weather, setWeather] = useState(null);
   const [location, setLocation] = useState(null);
-  console.log("LOCATION STATE:", location);
-  console.log("WEATHER STATE:", weather);
-  console.log(trip);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -33,6 +30,7 @@ function TripDetails() {
     async function loadTrip() {
       try {
         const response = await getTripById(id);
+
         setTrip(response);
 
 
@@ -42,8 +40,6 @@ function TripDetails() {
           const place = response.tripName.replace(" AI Trip", "");
 
           const weatherData = await getWeather(place);
-
-          console.log("Weather:", weatherData);
 
           setWeather(weatherData);
 
@@ -73,11 +69,6 @@ function TripDetails() {
           const place = trip.tripName.replace(" AI Trip", "");
 
           const data = await getLocation(place);
-
-          console.log(
-              "MAP LOCATION DATA =>",
-              JSON.stringify(data, null, 2)
-          );
 
           setLocation(data);
         }

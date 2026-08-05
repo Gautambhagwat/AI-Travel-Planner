@@ -6,14 +6,7 @@ import {
   PlaneTakeoff,
   Wallet,
 } from "lucide-react";
-
-const destinationImages = {
-  Goa: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800",
-  Manali: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800",
-  Jaipur: "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800",
-  Ladakh: "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?w=800",
-  Kerala: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800",
-};
+import { getDestinationImage } from "../../utils/destinationMeta";
 
 function RecentTrips({ trips }) {
   const navigate = useNavigate();
@@ -71,12 +64,12 @@ function RecentTrips({ trips }) {
           <div className="space-y-4">
             {trips.slice(0, 3).map((trip) => {
               const destination =
-                trip.tripName?.replace(" AI Trip", "") ||
-                "Destination";
+                  trip.tripName
+                      ?.replace(" AI Trip", "")
+                      .replace(" Trip", "")
+                      .trim() || "Destination";
 
-              const image =
-                destinationImages[destination] ||
-                "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800";
+              const image = getDestinationImage(destination);
 
               const duration =
                 Math.ceil(
