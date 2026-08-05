@@ -5,13 +5,14 @@ import AIItinerary from "../../components/itinerary/AIItinerary";
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import Button from "../../components/common/Button";
 import Modal from "../../components/common/Model";
-
+import { getWeather } from "../../services/weatherService";
 import TripSummary from "../../components/itinerary/TripSummary";
 import BudgetCard from "../../components/itinerary/BudgetCard";
-import HotelCard from "../../components/itinerary/HotelCard";
+import WeatherCard from "../../components/itinerary/WeatherCard";
+import MapCard from "../../components/itinerary/MapCard";
 import TravelGuideCard from "../../components/itinerary/TravelGuideCard";
 import EmptyItinerary from "../../components/itinerary/EmptyItinerary";
-
+import { getLocation } from "../../services/mapService";
 import {
   getTripById,
   deleteTrip,
@@ -20,7 +21,11 @@ import {
 function TripDetails() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [trip, setTrip] = useState(null);
-
+  const [weather, setWeather] = useState(null);
+  const [location, setLocation] = useState(null);
+  console.log("LOCATION STATE:", location);
+  console.log("WEATHER STATE:", weather);
+  console.log(trip);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -32,6 +37,27 @@ function TripDetails() {
         console.log("Trip details:", response);
 
         setTrip(response);
+
+
+// Fetch weather
+        try {
+
+          const place = response.tripName.replace(" AI Trip", "");
+
+          const weatherData = await getWeather(place);
+
+          console.log("Weather:", weatherData);
+
+          setWeather(weatherData);
+
+        } catch(error){
+
+          console.error(
+              "Weather loading failed",
+              error
+          );
+
+        }
       } catch (error) {
         console.error("Failed loading trip", error);
       }
@@ -42,6 +68,38 @@ function TripDetails() {
     }
   }, [id]);
 
+  useEffect(() => {
+    async function loadLocation() {
+      try {
+        if (trip?.tripName) {
+
+          const place = trip.tripName.replace(" AI Trip", "");
+
+          const data = await getLocation(place);
+
+          console.log(
+              "MAP LOCATION DATA =>",
+              JSON.stringify(data, null, 2)
+          );
+
+          setLocation(data);
+        }
+
+      } catch (error) {
+
+        console.error(
+            "Failed loading location",
+            error
+        );
+
+      }
+    }
+
+    if (trip) {
+      loadLocation();
+    }
+
+  }, [trip]);
   const handleDelete = async () => {
     try {
       await deleteTrip(trip.id);
@@ -107,13 +165,16 @@ function TripDetails() {
       {/* Summary Cards */}
       <section className="mb-10">
         <div className="grid gap-6 lg:grid-cols-2">
-          <BudgetCard
-            totalCost={trip.totalPrice}
+
+          <WeatherCard
+              weather={weather}
           />
 
-          <HotelCard
-            accommodation={itinerary?.summary}
+          <MapCard
+              location={location}
+              itinerary={itinerary}
           />
+
         </div>
       </section>
 

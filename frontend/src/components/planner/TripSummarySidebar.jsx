@@ -4,8 +4,6 @@ import {
   Wallet,
   Users,
   Sparkles,
-  Car,
-  Hotel,
   Bot,
   CheckCircle2,
   Circle,
@@ -13,16 +11,14 @@ import {
 
 import usePlanner from "../../hooks/usePlanner";
 
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 7;
 
 const summaryFields = [
   { icon: MapPin,       label: "Destination",   key: "destination",   emoji: "📍" },
   { icon: CalendarDays, label: "Travel Dates",   key: "_dates",        emoji: "📅" },
   { icon: Wallet,       label: "Budget",         key: "budget",        emoji: "💰" },
   { icon: Users,        label: "Travelers",      key: "_travelers",    emoji: "👥" },
-  { icon: Sparkles,     label: "Travel Style",   key: "travelStyle",   emoji: "🎯" },
-  { icon: Car,          label: "Transport",      key: "transport",     emoji: "🚗" },
-  { icon: Hotel,        label: "Accommodation",  key: "accommodation", emoji: "🏨" },
+  { icon: Sparkles,     label: "Travel Style",   key: "travelStyle",   emoji: "🎯" }
 ];
 
 function getValue(key, tripData) {

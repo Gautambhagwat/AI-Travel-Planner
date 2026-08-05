@@ -14,9 +14,7 @@ function PlannerProvider({ children }) {
     budget: "",
     travelers: 1,
     travelStyle: "",
-    interests: [],
-    transport: "",
-    accommodation: "",
+    interests: []
   });
 
   const validateStep = (stepToValidate = step) => {
@@ -74,21 +72,6 @@ function PlannerProvider({ children }) {
         "Select at least one interest before continuing.";
     }
 
-    if (
-      stepToValidate === 7 &&
-      !tripData.transport
-    ) {
-      message =
-        "Choose a transport preference before continuing.";
-    }
-
-    if (
-      stepToValidate === 8 &&
-      !tripData.accommodation
-    ) {
-      message =
-        "Choose an accommodation preference before continuing.";
-    }
 
     setValidationMessage(message);
     return !message;

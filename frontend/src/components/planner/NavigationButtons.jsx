@@ -6,8 +6,8 @@ import toast from "react-hot-toast";
 import usePlanner from "../../hooks/usePlanner";
 import { generateAndSaveTrip } from "../../services/plannerService";
 
-const LAST_FORM_STEP = 8;
-const REVIEW_STEP = 9;
+const LAST_FORM_STEP = 6;
+const REVIEW_STEP = 7;
 
 function NavigationButtons() {
   const [isGenerating, setIsGenerating] = useState(false);

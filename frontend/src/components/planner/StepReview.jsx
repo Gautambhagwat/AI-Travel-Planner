@@ -4,8 +4,6 @@ import {
   IndianRupee,
   Users,
   Compass,
-  Car,
-  Hotel,
   Sparkles,
   CheckCircle,
   Clock,
@@ -173,18 +171,6 @@ function StepReview() {
             label="Travel Style"
             value={tripData.travelStyle}
             emoji="🎯"
-          />
-          <ReviewRow
-            icon={Car}
-            label="Transport"
-            value={tripData.transport}
-            emoji="🚗"
-          />
-          <ReviewRow
-            icon={Hotel}
-            label="Accommodation"
-            value={tripData.accommodation}
-            emoji="🏨"
           />
         </div>
 

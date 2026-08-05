@@ -5,8 +5,6 @@ import {
   Users,
   Sparkles,
   Heart,
-  Car,
-  Hotel,
   CheckCircle2,
   ClipboardList,
 } from "lucide-react";
@@ -15,16 +13,13 @@ import usePlanner from "../../hooks/usePlanner";
 
 const steps = [
   { title: "Destination", icon: MapPin },
-  { title: "Dates",       icon: CalendarDays },
-  { title: "Budget",      icon: Wallet },
-  { title: "Travelers",   icon: Users },
-  { title: "Style",       icon: Sparkles },
-  { title: "Interests",   icon: Heart },
-  { title: "Transport",   icon: Car },
-  { title: "Stay",        icon: Hotel },
-  { title: "Review",      icon: CheckCircle2 },
+  { title: "Dates", icon: CalendarDays },
+  { title: "Budget", icon: Wallet },
+  { title: "Travelers", icon: Users },
+  { title: "Style", icon: Sparkles },
+  { title: "Interests", icon: Heart },
+  { title: "Review", icon: CheckCircle2 },
 ];
-
 function ProgressBar() {
   const { step } = usePlanner();
   const progress = (step / steps.length) * 100;

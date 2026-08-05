@@ -10,8 +10,6 @@ import StepBudget from "../../components/planner/StepBudget";
 import StepTravelers from "../../components/planner/StepTravelers";
 import StepTravelStyle from "../../components/planner/StepTravelStyle";
 import StepInterests from "../../components/planner/StepInterests";
-import StepTransport from "../../components/planner/StepTransport";
-import StepAccommodation from "../../components/planner/StepAccommodation";
 import StepReview from "../../components/planner/StepReview";
 
 import usePlanner from "../../hooks/usePlanner";
@@ -37,9 +35,7 @@ function Planner() {
           {step === 4 && <StepTravelers />}
           {step === 5 && <StepTravelStyle />}
           {step === 6 && <StepInterests />}
-          {step === 7 && <StepTransport />}
-          {step === 8 && <StepAccommodation />}
-          {step === 9 && <StepReview />}
+          {step === 7 && <StepReview />}
         </div>
 
         <NavigationButtons />

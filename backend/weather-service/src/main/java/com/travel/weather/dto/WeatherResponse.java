@@ -3,10 +3,20 @@ package com.travel.weather.dto;
 public class WeatherResponse {
 
     private String place;
+
     private double latitude;
+
     private double longitude;
+
     private double temperature;
+
     private int weatherCode;
+
+    private int humidity;
+
+    private double windSpeed;
+
+    private String advice;
 
 
     public WeatherResponse() {
@@ -19,7 +29,9 @@ public class WeatherResponse {
             double latitude,
             double longitude,
             double temperature,
-            int weatherCode
+            int weatherCode,
+            int humidity,
+            double windSpeed
     ) {
 
         this.place = place;
@@ -27,6 +39,31 @@ public class WeatherResponse {
         this.longitude = longitude;
         this.temperature = temperature;
         this.weatherCode = weatherCode;
+        this.humidity = humidity;
+        this.windSpeed = windSpeed;
+
+    }
+
+
+    public WeatherResponse(
+            String place,
+            double latitude,
+            double longitude,
+            double temperature,
+            int weatherCode,
+            int humidity,
+            double windSpeed,
+            String advice
+    ) {
+
+        this.place = place;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.temperature = temperature;
+        this.weatherCode = weatherCode;
+        this.humidity = humidity;
+        this.windSpeed = windSpeed;
+        this.advice = advice;
 
     }
 
@@ -78,6 +115,36 @@ public class WeatherResponse {
 
     public void setWeatherCode(int weatherCode) {
         this.weatherCode = weatherCode;
+    }
+
+
+    public int getHumidity() {
+        return humidity;
+    }
+
+
+    public void setHumidity(int humidity) {
+        this.humidity = humidity;
+    }
+
+
+    public double getWindSpeed() {
+        return windSpeed;
+    }
+
+
+    public void setWindSpeed(double windSpeed) {
+        this.windSpeed = windSpeed;
+    }
+
+
+    public String getAdvice() {
+        return advice;
+    }
+
+
+    public void setAdvice(String advice) {
+        this.advice = advice;
     }
 
 }

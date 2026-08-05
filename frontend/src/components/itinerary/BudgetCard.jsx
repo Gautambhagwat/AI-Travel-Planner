@@ -1,20 +1,32 @@
 import {
   IndianRupee,
   Wallet,
-  TrendingUp,
+  Users,
+  CalendarDays,
 } from "lucide-react";
 
-function BudgetCard({ totalCost }) {
+function BudgetCard({
+                      totalCost,
+                      travelers,
+                      startDate,
+                      endDate,
+                    }) {
   const formatCurrency = (amount) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
       maximumFractionDigits: 0,
     }).format(amount);
-
-  const percentage = 100;
-
-  const remaining = 0;
+  const duration =
+      startDate && endDate
+          ? Math.max(
+              1,
+              Math.round(
+                  (new Date(endDate) - new Date(startDate)) /
+                  (1000 * 60 * 60 * 24)
+              ) + 1
+          )
+          : null;
 
   return (
     <div className="rounded-3xl border border-secondary-200 bg-white p-7 shadow-card">
@@ -37,54 +49,27 @@ function BudgetCard({ totalCost }) {
 
       </div>
 
-      <div className="mt-8">
-
-        <div className="mb-3 flex justify-between text-sm">
-          <span className="text-secondary-500">
-            Budget Usage
-          </span>
-
-          <span className="font-semibold text-secondary-900">
-            {Math.round(percentage)}%
-          </span>
-        </div>
-
-        <div className="h-3 overflow-hidden rounded-full bg-secondary-100">
-
-          <div
-            className="h-full rounded-full bg-primary-600 transition-all duration-500"
-            style={{
-              width: `${percentage}%`,
-            }}
-          />
-
-        </div>
-
-      </div>
-
       <div className="mt-8 grid grid-cols-2 gap-4">
 
         <div className="rounded-2xl bg-secondary-50 p-4">
           <div className="mb-2 flex items-center gap-2 text-secondary-500">
-            <IndianRupee size={16} />
-
-            Budget
+            <Users size={16} />
+            Travelers
           </div>
 
           <p className="font-bold text-secondary-900">
-            {formatCurrency(totalCost)}
+            {travelers || 1}
           </p>
         </div>
 
         <div className="rounded-2xl bg-primary-50 p-4">
           <div className="mb-2 flex items-center gap-2 text-primary-700">
-            <TrendingUp size={16} />
-
-            Remaining
+            <CalendarDays size={16} />
+            Duration
           </div>
 
           <p className="font-bold text-primary-700">
-            {formatCurrency(remaining)}
+            {duration ? `${duration} Days` : "--"}
           </p>
         </div>
 
