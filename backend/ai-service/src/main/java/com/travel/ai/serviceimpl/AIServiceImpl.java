@@ -195,8 +195,10 @@ Generate the JSON now.
 
             Map<?, ?> response = responseEntity.getBody();
             String text = extractContent(response);
-            aiResponse.setAiRecommendation(text);
 
+            text = cleanJson(text);
+
+            aiResponse.setAiRecommendation(text);
         } catch (HttpClientErrorException e) {
             aiResponse.setAiRecommendation(handleClientError(e));
         } catch (HttpServerErrorException e) {
@@ -254,5 +256,34 @@ Generate the JSON now.
                 return "The AI service returned an unexpected error ("
                        + statusCode + "). Please try again later.";
         }
+    }
+
+    private String cleanJson(String text){
+
+        if(text == null)
+            return "{}";
+
+
+        text = text
+                .replace("```json","")
+                .replace("```","")
+                .trim();
+
+
+        int start = text.indexOf("{");
+        int end = text.lastIndexOf("}");
+
+
+        if(start >=0 && end >=0){
+
+            return text.substring(
+                    start,
+                    end+1
+            );
+
+        }
+
+
+        return "{}";
     }
 }

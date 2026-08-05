@@ -17,6 +17,7 @@ import {
   getTripById,
   deleteTrip,
 } from "../../services/tripService";
+import { getDestinationImage } from "../../utils/destinationMeta";
 
 function TripDetails() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -37,7 +38,9 @@ function TripDetails() {
 // Fetch weather
         try {
 
-          const place = response.tripName.replace(" AI Trip", "");
+          const place = response.tripName
+              .replace(" AI Trip","")
+              .replace(" Trip","");
 
           const weatherData = await getWeather(place);
 
@@ -111,17 +114,53 @@ function TripDetails() {
   let itinerary = null;
 
   try {
-    itinerary = trip.aiRecommendation
-      ? JSON.parse(trip.aiRecommendation)
-      : null;
-  } catch (error) {
-    console.error("Invalid AI recommendation JSON", error);
+
+    if(trip.aiRecommendation){
+
+      let cleanJson = trip.aiRecommendation
+          .replace("```json","")
+          .replace("```","")
+          .trim();
+
+
+      const start = cleanJson.indexOf("{");
+      const end = cleanJson.lastIndexOf("}");
+
+      if(start !== -1 && end !== -1){
+
+        cleanJson = cleanJson.substring(
+            start,
+            end + 1
+        );
+
+        itinerary = JSON.parse(cleanJson);
+
+      }
+
+    }
+
+  } catch(error){
+
+    console.error(
+        "Invalid AI recommendation JSON",
+        error
+    );
+
   }
+
+  const destination = trip.tripName
+      .replace(" AI Trip", "")
+      .replace(" Trip", "")
+      .trim();
 
   return (
     <DashboardLayout>
       {/* Hero */}
-      <TripSummary trip={trip} />
+      {/* Hero */}
+      <TripSummary
+          trip={trip}
+          heroImage={getDestinationImage(destination)}
+      />
 
       {/* Manage Trip */}
       <section className="mb-10 rounded-3xl border border-secondary-200 bg-white p-5 shadow-card">
