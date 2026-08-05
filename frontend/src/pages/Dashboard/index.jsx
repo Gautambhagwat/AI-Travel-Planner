@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import WelcomeBanner from "../../components/dashboard/WelcomeBanner";
@@ -7,47 +7,31 @@ import QuickActions from "../../components/dashboard/QuickActions";
 import RecentTrips from "../../components/dashboard/RecentTrips";
 import AIRecommendations from "../../components/dashboard/AIRecommendations";
 
+import { AuthContext } from "../../context/AuthContext";
 import { getTripsByUserId } from "../../services/tripService";
 
 function Dashboard() {
+  const { user: authUser } = useContext(AuthContext);
   const [trips, setTrips] = useState([]);
 
   useEffect(() => {
     async function loadTrips() {
+      const userId = authUser?.id;
+      if (!userId) return;
+
       try {
-        const loggedInUser = JSON.parse(
-          localStorage.getItem("user")
-        );
-
-        if (!loggedInUser?.id) {
-          console.log("User not logged in");
-          return;
-        }
-
-        const response = await getTripsByUserId(
-          loggedInUser.id
-        );
-
-        console.log(
-          "Trips from backend:",
-          response
-        );
-
+        const response = await getTripsByUserId(userId);
         setTrips(response);
-      } catch (error) {
-        console.error(
-          "Failed to fetch trips:",
-          error
-        );
+      } catch {
+        // Trip load failure is non-critical; show empty state silently
       }
     }
 
     loadTrips();
-  }, []);
+  }, [authUser]);
 
   const totalEstimatedCost = trips.reduce(
-    (total, trip) =>
-      total + Number(trip.totalPrice || 0),
+    (total, trip) => total + Number(trip.totalPrice || 0),
     0
   );
 
@@ -55,14 +39,11 @@ function Dashboard() {
     trips.map((trip) => trip.destinationId)
   ).size;
 
-  const formattedCost = new Intl.NumberFormat(
-    "en-IN",
-    {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 0,
-    }
-  ).format(totalEstimatedCost);
+  const formattedCost = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(totalEstimatedCost);
 
   return (
     <DashboardLayout>
@@ -72,20 +53,9 @@ function Dashboard() {
         aria-label="Dashboard Statistics"
         className="mb-6 grid gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3"
       >
-        <StatCard
-          title="Total Trips"
-          value={trips.length}
-        />
-
-        <StatCard
-          title="Destinations"
-          value={destinations}
-        />
-
-        <StatCard
-          title="Estimated Budget"
-          value={formattedCost}
-        />
+        <StatCard title="Total Trips" value={trips.length} />
+        <StatCard title="Destinations" value={destinations} />
+        <StatCard title="Estimated Budget" value={formattedCost} />
       </section>
 
       <section className="mb-6">
@@ -97,7 +67,6 @@ function Dashboard() {
         className="grid gap-6 lg:grid-cols-2"
       >
         <RecentTrips trips={trips} />
-
         <AIRecommendations />
       </section>
     </DashboardLayout>

@@ -10,8 +10,8 @@ function ForgotPasswordForm() {
     handleSubmit,
   } = useForm();
 
-  const submit = (data) => {
-    console.log(data);
+  const submit = (_data) => {
+    // TODO: Wire to auth-service password reset endpoint when available
   };
 
   return (

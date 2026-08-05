@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
+import { updateUserByEmail } from "../../services/userService";
 import {
   User,
   MapPin,
@@ -27,63 +28,16 @@ import {
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import Button from "../../components/common/Button";
+import { AuthContext } from "../../context/AuthContext";
+import { getUserByEmail } from "../../services/userService";
+import { toast } from "../../components/ui/Toast";
+import {
+  getPreferences,
+  updatePreferences,
+} from "../../services/preferenceService";
+import { getTripStats } from "../../services/tripService";
 
-/* ─── Mock data (no backend changes) ─────────────────────── */
-const INITIAL_USER = {
-  name: "Traveler",
-  email: "traveler@example.com",
-  joined: "July 2026",
-  travelStyle: "Luxury",
-  preferredTransport: "Flight",
-  budget: "Medium",
-  trips: 12,
-  countries: 7,
-  days: 48,
-  bio: "Passionate explorer chasing sunsets across continents.",
-  interests: ["Beach", "Mountains", "Culture", "Food", "Adventure"],
-  favoriteDestination: "Santorini, Greece",
-};
-
-const RECENT_ACTIVITY = [
-  {
-    id: 1,
-    icon: Plane,
-    color: "bg-primary-100 text-primary-600",
-    title: "Trip to Bali planned",
-    subtitle: "7-day itinerary · 14 activities",
-    time: "2 days ago",
-    badge: "New",
-    badgeColor: "bg-primary-100 text-primary-700",
-  },
-  {
-    id: 2,
-    icon: MapPin,
-    color: "bg-accent-100 text-accent-600",
-    title: "Saved Paris to wishlist",
-    subtitle: "France · Europe",
-    time: "5 days ago",
-    badge: null,
-  },
-  {
-    id: 3,
-    icon: Star,
-    color: "bg-warning-100 text-warning-600",
-    title: "Reviewed Tokyo trip",
-    subtitle: "Rated 5 stars · 12 days",
-    time: "1 week ago",
-    badge: null,
-  },
-  {
-    id: 4,
-    icon: Globe,
-    color: "bg-success-100 text-success-600",
-    title: "Explored 3 new destinations",
-    subtitle: "Portugal, Morocco, Jordan",
-    time: "2 weeks ago",
-    badge: null,
-  },
-];
-
+/* ─── Interest icon map ───────────────────────────────────── */
 const INTEREST_ICONS = {
   Beach: { icon: Globe, color: "bg-cyan-100 text-cyan-700" },
   Mountains: { icon: Mountain, color: "bg-emerald-100 text-emerald-700" },
@@ -100,35 +54,23 @@ const PREF_META = {
     color: "bg-primary-100 text-primary-700",
     gradient: "from-primary-50 to-white",
   },
-  preferredTransport: {
-    label: "Transport",
-    icon: Plane,
-    color: "bg-accent-100 text-accent-700",
-    gradient: "from-accent-50 to-white",
-  },
   budget: {
     label: "Budget Range",
     icon: Wallet,
     color: "bg-success-100 text-success-700",
     gradient: "from-success-50 to-white",
   },
-  favoriteDestination: {
-    label: "Favourite Spot",
-    icon: Heart,
-    color: "bg-rose-100 text-rose-700",
-    gradient: "from-rose-50 to-white",
-  },
 };
 
 /* ─── Edit Profile Modal ──────────────────────────────────── */
 function EditProfileModal({ user, onClose, onSave }) {
+  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
-    name: user.name,
-    bio: user.bio,
-    travelStyle: user.travelStyle,
-    preferredTransport: user.preferredTransport,
-    budget: user.budget,
-    favoriteDestination: user.favoriteDestination,
+    name: user.name || "",
+    bio: user.bio || "",
+    travelStyle: user.travelStyle || "Mid-range",
+    budget: user.budget || "Medium",
+    interests: user.interests || [],
   });
 
   function handleChange(e) {
@@ -136,11 +78,96 @@ function EditProfileModal({ user, onClose, onSave }) {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    onSave(form);
-    onClose();
+  function toggleInterest(tag) {
+    setForm((prev) => {
+      const exists = prev.interests.includes(tag);
+      return {
+        ...prev,
+        interests: exists
+          ? prev.interests.filter((i) => i !== tag)
+          : [...prev.interests, tag],
+      };
+    });
   }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    if (!form.name.trim()) {
+      toast.error("Display name is required.");
+      return;
+    }
+
+    if (!user.email) {
+      toast.error("User email not found.");
+      return;
+    }
+
+    try {
+      setSaving(true);
+
+      // UserService: only fullName supported by backend
+      const userPayload = {
+        fullName: form.name.trim(),
+      };
+
+      // Store bio in localStorage under key bio_<userId>
+      const bioKey = `bio_${user.id}`;
+      if (form.bio) {
+        localStorage.setItem(bioKey, form.bio.trim());
+      } else {
+        localStorage.removeItem(bioKey);
+      }
+
+      // PreferenceService: budget + travelStyle + interests
+      const prefPayload = {
+        budget: form.budget,
+        travelStyle: form.travelStyle,
+        interests: form.interests,
+      };
+
+      const [updatedProfile] = await Promise.all([
+        updateUserByEmail(user.email, userPayload),
+        updatePreferences(user.id, prefPayload),
+      ]);
+
+      const merged = {
+        ...updatedProfile,
+        name: updatedProfile.fullName || updatedProfile.name,
+        bio: form.bio.trim(),
+        budget: form.budget,
+        travelStyle: form.travelStyle,
+        interests: form.interests,
+      };
+
+      onSave(merged);
+
+      // Sync AuthContext / localStorage
+      const stored = localStorage.getItem("user");
+      if (stored) {
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ ...JSON.parse(stored), ...updatedProfile, bio: form.bio.trim() })
+        );
+      }
+
+      toast.success("Profile updated successfully.");
+      onClose();
+    } catch (err) {
+      toast.error(err.message || "Unable to update profile.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const INTEREST_OPTIONS = [
+    "Beach",
+    "Mountains",
+    "Culture",
+    "Food",
+    "Adventure",
+    "Coffee",
+  ];
 
   return (
     /* Backdrop */
@@ -153,7 +180,7 @@ function EditProfileModal({ user, onClose, onSave }) {
     >
       {/* Drawer / Sheet */}
       <div
-        className="w-full max-w-lg animate-[scaleIn_0.25s_ease-out] rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl"
+        className="w-full max-w-lg rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl"
         style={{ animation: "slideUpIn 0.3s cubic-bezier(0.34,1.56,0.64,1)" }}
       >
         {/* Header */}
@@ -163,7 +190,7 @@ function EditProfileModal({ user, onClose, onSave }) {
               Edit Profile
             </h2>
             <p className="mt-0.5 text-xs text-secondary-400">
-              Changes are local only · for demo purposes
+              Updates are saved to UserService &amp; PreferenceService
             </p>
           </div>
           <button
@@ -240,24 +267,6 @@ function EditProfileModal({ user, onClose, onSave }) {
               </select>
             </div>
 
-            {/* Transport */}
-            <div>
-              <label htmlFor="edit-transport" className="mb-1.5 block text-sm font-medium text-secondary-700">
-                Preferred Transport
-              </label>
-              <select
-                id="edit-transport"
-                name="preferredTransport"
-                value={form.preferredTransport}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-secondary-200 bg-secondary-50 px-4 py-2.5 text-sm text-secondary-900 outline-none transition focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100"
-              >
-                {["Flight", "Train", "Road Trip", "Cruise", "Mixed"].map((t) => (
-                  <option key={t}>{t}</option>
-                ))}
-              </select>
-            </div>
-
             {/* Budget */}
             <div>
               <label htmlFor="edit-budget" className="mb-1.5 block text-sm font-medium text-secondary-700">
@@ -276,18 +285,28 @@ function EditProfileModal({ user, onClose, onSave }) {
               </select>
             </div>
 
-            {/* Favourite Destination */}
+            {/* Interests */}
             <div>
-              <label htmlFor="edit-fav" className="mb-1.5 block text-sm font-medium text-secondary-700">
-                Favourite Destination
-              </label>
-              <input
-                id="edit-fav"
-                name="favoriteDestination"
-                value={form.favoriteDestination}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-secondary-200 bg-secondary-50 px-4 py-2.5 text-sm text-secondary-900 outline-none transition focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100"
-              />
+              <p className="mb-2 text-sm font-medium text-secondary-700">Interests</p>
+              <div className="flex flex-wrap gap-2">
+                {INTEREST_OPTIONS.map((tag) => {
+                  const selected = form.interests.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => toggleInterest(tag)}
+                      className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-150 hover:scale-105 ${
+                        selected
+                          ? "bg-primary-600 text-white shadow-sm"
+                          : "bg-secondary-100 text-secondary-600 hover:bg-secondary-200"
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </form>
@@ -297,9 +316,14 @@ function EditProfileModal({ user, onClose, onSave }) {
           <Button variant="secondary" className="flex-1" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="primary" className="flex-1 gap-2" onClick={handleSubmit}>
+          <Button
+            variant="primary"
+            className="flex-1 gap-2"
+            disabled={saving}
+            onClick={handleSubmit}
+          >
             <Check size={15} />
-            Save Changes
+            {saving ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </div>
@@ -313,7 +337,6 @@ function ProfileStatCard({ icon: Icon, value, label, color, gradient, trend }) {
     <div
       className={`group relative overflow-hidden rounded-2xl border border-secondary-100 bg-gradient-to-br ${gradient} p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:rounded-3xl sm:p-6`}
     >
-      {/* Decorative blob */}
       <div className="pointer-events-none absolute -right-4 -top-4 h-20 w-20 rounded-full bg-white/40 blur-xl" />
 
       <div className="flex items-start justify-between">
@@ -331,7 +354,7 @@ function ProfileStatCard({ icon: Icon, value, label, color, gradient, trend }) {
       </div>
 
       <p className="mt-4 text-3xl font-bold tracking-tight text-secondary-900 sm:text-4xl">
-        {value}
+        {value ?? "—"}
       </p>
       <p className="mt-1 text-sm font-medium text-secondary-500">{label}</p>
     </div>
@@ -378,22 +401,28 @@ function InterestChip({ label }) {
 
 /* ─── Activity Item ───────────────────────────────────────── */
 function ActivityItem({ item }) {
-  const IconComp = item.icon;
+  const statusColor =
+    item.status === "completed"
+      ? "bg-success-100 text-success-600"
+      : "bg-primary-100 text-primary-600";
+
   return (
     <div className="group flex items-center gap-4 rounded-2xl p-3 transition-all duration-200 hover:bg-secondary-50">
       <div
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${item.color} transition-transform duration-200 group-hover:scale-110`}
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${statusColor} transition-transform duration-200 group-hover:scale-110`}
       >
-        <IconComp size={18} />
+        <Plane size={18} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-secondary-800 truncate">{item.title}</p>
-        <p className="mt-0.5 text-xs text-secondary-400">{item.subtitle}</p>
+        <p className="truncate text-sm font-semibold text-secondary-800">{item.title}</p>
+        {item.subtitle && (
+          <p className="mt-0.5 text-xs text-secondary-400">{item.subtitle}</p>
+        )}
       </div>
       <div className="shrink-0 flex flex-col items-end gap-1">
-        {item.badge && (
-          <span className={`rounded-full ${item.badgeColor} px-2 py-0.5 text-xs font-semibold`}>
-            {item.badge}
+        {item.status === "completed" && (
+          <span className="rounded-full bg-success-100 px-2 py-0.5 text-xs font-semibold text-success-700">
+            Done
           </span>
         )}
         <span className="text-xs text-secondary-400">{item.time}</span>
@@ -404,14 +433,102 @@ function ActivityItem({ item }) {
 
 /* ─── Main Profile Component ──────────────────────────────── */
 function Profile() {
-  const [user, setUser] = useState(INITIAL_USER);
+  const { user: authUser } = useContext(AuthContext);
+
+  const [profile, setProfile] = useState(null);
+  const [stats, setStats] = useState({ tripsPlanned: null, countriesVisited: null, travelDays: null, recentActivity: [] });
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  // Load UserService + PreferenceService in parallel
+  useEffect(() => {
+    async function loadProfile() {
+      if (!authUser?.email) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const backendProfile = await getUserByEmail(authUser.email);
+
+        let preferences = {};
+        try {
+          preferences = await getPreferences(backendProfile.id);
+        } catch {
+          // Preference record may not exist yet — safe to skip
+        }
+
+        const localBio = localStorage.getItem(`bio_${backendProfile.id}`) || backendProfile.bio || "";
+
+        setProfile({
+          id: backendProfile.id,
+          name: backendProfile.fullName || backendProfile.name || "",
+          email: backendProfile.email || authUser.email,
+          bio: localBio,
+          joined: backendProfile.createdAt
+            ? new Date(backendProfile.createdAt).toLocaleDateString("en-IN", {
+                month: "long",
+                year: "numeric",
+              })
+            : null,
+          travelStyle: preferences.travelStyle || null,
+          budget: preferences.budget || null,
+          interests: preferences.interests || [],
+        });
+      } catch {
+        toast.error("Unable to load profile.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProfile();
+  }, [authUser]);
+
+  // Load TripService statistics separately so the page renders fast
+  useEffect(() => {
+    async function loadStats() {
+      const userId = authUser?.id;
+      if (!userId) {
+        setStatsLoading(false);
+        return;
+      }
+
+      try {
+        const data = await getTripStats(userId);
+        setStats(data);
+      } catch {
+        // Stats unavailable — show empty state gracefully
+      } finally {
+        setStatsLoading(false);
+      }
+    }
+
+    loadStats();
+  }, [authUser]);
 
   function handleSave(updates) {
-    setUser((prev) => ({ ...prev, ...updates }));
+    setProfile((prev) => ({ ...prev, ...updates }));
   }
 
-  const prefKeys = ["travelStyle", "preferredTransport", "budget", "favoriteDestination"];
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex h-[60vh] items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
+            <p className="mt-4 text-secondary-500">Loading profile...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  const displayName = profile?.name || authUser?.fullName || "Traveler";
+  const displayEmail = profile?.email || authUser?.email || "";
+  const displayBio = profile?.bio || "";
+  const displayJoined = profile?.joined;
 
   return (
     <DashboardLayout>
@@ -420,19 +537,16 @@ function Profile() {
         aria-label="Profile hero"
         className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-sky-700 via-primary-600 to-cyan-500 p-6 text-white shadow-xl sm:mb-10 sm:rounded-3xl sm:p-8 lg:p-10"
       >
-        {/* Decorative blobs */}
         <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
         <div className="pointer-events-none absolute -bottom-8 left-1/2 h-32 w-64 rounded-full bg-cyan-300/20 blur-2xl" />
 
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           {/* Left: Avatar + Info */}
           <div className="flex items-end gap-5 sm:gap-6">
-            {/* Avatar ring */}
             <div className="relative shrink-0">
               <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 ring-4 ring-white/30 backdrop-blur-sm sm:h-24 sm:w-24 sm:rounded-3xl">
                 <User size={44} className="text-white" aria-hidden="true" />
               </div>
-              {/* Online dot */}
               <span
                 aria-label="Online"
                 className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white bg-emerald-400"
@@ -440,29 +554,35 @@ function Profile() {
             </div>
 
             <div className="min-w-0">
-              {/* Badge */}
               <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-sm ring-1 ring-white/20">
                 <Sparkles size={12} aria-hidden="true" />
                 Itinera Explorer
               </div>
 
               <h1 className="break-words text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
-                {user.name}
+                {displayName}
               </h1>
 
-              <p className="mt-1 text-sm text-sky-100 sm:text-base">{user.bio}</p>
+              {displayBio && (
+                <p className="mt-1 text-sm text-sky-100 sm:text-base">{displayBio}</p>
+              )}
 
-              {/* Meta chips */}
               <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-sky-100">
-                <span className="flex items-center gap-1">
-                  <Mail size={12} aria-hidden="true" />
-                  {user.email}
-                </span>
-                <span className="h-1 w-1 rounded-full bg-sky-300" />
-                <span className="flex items-center gap-1">
-                  <Clock size={12} aria-hidden="true" />
-                  Member since {user.joined}
-                </span>
+                {displayEmail && (
+                  <span className="flex items-center gap-1">
+                    <Mail size={12} aria-hidden="true" />
+                    {displayEmail}
+                  </span>
+                )}
+                {displayEmail && displayJoined && (
+                  <span className="h-1 w-1 rounded-full bg-sky-300" />
+                )}
+                {displayJoined && (
+                  <span className="flex items-center gap-1">
+                    <Clock size={12} aria-hidden="true" />
+                    Member since {displayJoined}
+                  </span>
+                )}
                 <span className="h-1 w-1 rounded-full bg-sky-300" />
                 <span className="flex items-center gap-1">
                   <Shield size={12} aria-hidden="true" />
@@ -494,27 +614,24 @@ function Profile() {
       <section aria-label="Travel statistics" className="mb-8 grid gap-4 sm:gap-5 md:grid-cols-3">
         <ProfileStatCard
           icon={Plane}
-          value={user.trips}
+          value={statsLoading ? "…" : stats.tripsPlanned}
           label="Trips Planned"
           color="bg-primary-100 text-primary-700"
           gradient="from-primary-50 via-white to-white"
-          trend="+3 this year"
         />
         <ProfileStatCard
           icon={MapPin}
-          value={user.countries}
-          label="Countries Visited"
+          value={statsLoading ? "…" : stats.countriesVisited}
+          label="Destinations Visited"
           color="bg-accent-100 text-accent-700"
           gradient="from-cyan-50 via-white to-white"
-          trend="+2 new"
         />
         <ProfileStatCard
           icon={CalendarDays}
-          value={user.days}
+          value={statsLoading ? "…" : stats.travelDays}
           label="Travel Days"
           color="bg-success-100 text-success-700"
           gradient="from-emerald-50 via-white to-white"
-          trend="+12 days"
         />
       </section>
 
@@ -538,20 +655,16 @@ function Profile() {
 
           {/* Preference cards */}
           <div className="space-y-2.5">
-            {prefKeys.map((key) => {
-              const meta = PREF_META[key];
-              if (!meta) return null;
-              return (
-                <PrefCard
-                  key={key}
-                  icon={meta.icon}
-                  label={meta.label}
-                  value={user[key] || "—"}
-                  color={meta.color}
-                  gradient={meta.gradient}
-                />
-              );
-            })}
+            {Object.entries(PREF_META).map(([key, meta]) => (
+              <PrefCard
+                key={key}
+                icon={meta.icon}
+                label={meta.label}
+                value={profile?.[key] || "—"}
+                color={meta.color}
+                gradient={meta.gradient}
+              />
+            ))}
           </div>
 
           {/* Interests */}
@@ -559,14 +672,16 @@ function Profile() {
             <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-secondary-400">
               Interests
             </p>
-            {user.interests && user.interests.length > 0 ? (
+            {profile?.interests && profile.interests.length > 0 ? (
               <div className="flex flex-wrap gap-2">
-                {user.interests.map((tag) => (
+                {profile.interests.map((tag) => (
                   <InterestChip key={tag} label={tag} />
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-secondary-400 italic">No interests added yet.</p>
+              <p className="text-sm italic text-secondary-400">
+                No interests added yet. Edit your profile to add some.
+              </p>
             )}
           </div>
         </section>
@@ -586,16 +701,19 @@ function Profile() {
             </div>
           </div>
 
-          {RECENT_ACTIVITY.length > 0 ? (
+          {statsLoading ? (
+            <div className="flex items-center justify-center py-10">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
+            </div>
+          ) : stats.recentActivity.length > 0 ? (
             <ul role="list" className="divide-y divide-secondary-50">
-              {RECENT_ACTIVITY.map((item) => (
+              {stats.recentActivity.map((item) => (
                 <li key={item.id}>
                   <ActivityItem item={item} />
                 </li>
               ))}
             </ul>
           ) : (
-            /* Empty state */
             <div className="flex flex-col items-center justify-center rounded-2xl bg-secondary-50 py-10 text-center">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary-100 text-secondary-400">
                 <Globe size={24} aria-hidden="true" />
@@ -607,27 +725,27 @@ function Profile() {
             </div>
           )}
 
-          {/* View all */}
-          <button
-            className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-semibold text-primary-600 transition-all duration-150 hover:bg-primary-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-400"
-            aria-label="View all activity"
-          >
-            View all activity
-            <ChevronRight size={14} />
-          </button>
+          {stats.recentActivity.length > 0 && (
+            <button
+              className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-semibold text-primary-600 transition-all duration-150 hover:bg-primary-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-400"
+              aria-label="View all activity"
+            >
+              View all activity
+              <ChevronRight size={14} />
+            </button>
+          )}
         </section>
       </div>
 
       {/* ── Edit Modal ────────────────────────────────────── */}
-      {isEditing && (
+      {isEditing && profile && (
         <EditProfileModal
-          user={user}
+          user={profile}
           onClose={() => setIsEditing(false)}
           onSave={handleSave}
         />
       )}
 
-      {/* slideUpIn keyframe (inline so no extra file) */}
       <style>{`
         @keyframes slideUpIn {
           from { opacity: 0; transform: translateY(40px) scale(0.97); }

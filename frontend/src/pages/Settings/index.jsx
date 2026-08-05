@@ -1,122 +1,66 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
-  Bell,
-  Globe,
-  Lock,
-  Moon,
-  Plane,
-  Settings as SettingsIcon,
-  Shield,
-  Sparkles,
-  User,
-  Wallet,
-  Sun,
-  Monitor,
-  ChevronRight,
-  Info,
   Brain,
+  Check,
+  ChevronRight,
   Compass,
   CreditCard,
-  Languages,
-  Database,
+  Edit2,
+  Lock,
   Mail,
-  Smartphone,
-  Megaphone,
-  Check,
+  Plane,
+  Sparkles,
+  Settings as SettingsIcon,
+  User,
+  X,
 } from "lucide-react";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
-
-/* ─────────────────────────────────────────────────────────────
-   Local UI state – no backend touched
-───────────────────────────────────────────────────────────── */
-const INITIAL_TOGGLES = {
-  tripReminders: true,
-  travelUpdates: false,
-  aiRecommendations: true,
-  emailDigest: false,
-  smsAlerts: false,
-  marketingEmails: false,
-  dataProtection: true,
-  analyticsTracking: false,
-};
-
-const INITIAL_SELECTS = {
-  travelStyle: "Luxury",
-  transport: "Flight",
-  budget: "Medium",
-  theme: "Light",
-  language: "English",
-  currency: "USD",
-};
+import Button from "../../components/common/Button";
+import { AuthContext } from "../../context/AuthContext";
+import { getUserByEmail, updateUserByEmail } from "../../services/userService";
+import { getPreferences, updatePreferences } from "../../services/preferenceService";
+import { toast } from "../../components/ui/Toast";
 
 const TRAVEL_STYLE_OPTS = ["Budget", "Mid-range", "Luxury", "Backpacker", "Family"];
 const TRANSPORT_OPTS = ["Flight", "Train", "Road Trip", "Cruise", "Mixed"];
 const BUDGET_OPTS = ["Low", "Medium", "High", "Flexible"];
-const LANGUAGE_OPTS = ["English", "Spanish", "French", "German", "Japanese", "Hindi"];
-const CURRENCY_OPTS = ["USD", "EUR", "GBP", "INR", "JPY", "AED"];
-
-/* ─────────────────────────────────────────────────────────────
-   Premium animated Toggle
-───────────────────────────────────────────────────────────── */
-function Toggle({ id, checked, onChange, label }) {
-  return (
-    <button
-      id={id}
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      onClick={onChange}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-all duration-300 ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 ${
-        checked
-          ? "bg-primary-600 shadow-[0_0_0_1px_theme(colors.primary.600)]"
-          : "bg-secondary-200 shadow-[0_0_0_1px_theme(colors.secondary.200)]"
-      }`}
-    >
-      <span
-        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-0 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-          checked ? "translate-x-6" : "translate-x-1"
-        }`}
-      />
-    </button>
-  );
-}
 
 /* ─────────────────────────────────────────────────────────────
    Section wrapper
 ───────────────────────────────────────────────────────────── */
-function SettingsSection({ icon: Icon, iconColor, title, description, children }) {
+function SettingsSection({ icon: Icon, iconColor, title, description, headerAction, children }) {
   return (
     <section
       aria-labelledby={`section-${title.toLowerCase().replace(/\s+/g, "-")}`}
       className="overflow-hidden rounded-2xl border border-secondary-100 bg-white shadow-card transition-shadow duration-200 hover:shadow-md sm:rounded-3xl"
     >
-      {/* Section header */}
-      <div className="flex items-center gap-4 border-b border-secondary-100 bg-secondary-50/60 px-6 py-4 sm:px-8 sm:py-5">
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${iconColor}`}>
-          <Icon size={18} />
+      <div className="flex items-center justify-between border-b border-secondary-100 bg-secondary-50/60 px-6 py-4 sm:px-8 sm:py-5">
+        <div className="flex items-center gap-4 min-w-0 flex-1">
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${iconColor}`}>
+            <Icon size={18} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2
+              id={`section-${title.toLowerCase().replace(/\s+/g, "-")}`}
+              className="text-base font-bold text-secondary-900"
+            >
+              {title}
+            </h2>
+            {description && (
+              <p className="mt-0.5 text-xs text-secondary-400">{description}</p>
+            )}
+          </div>
         </div>
-        <div className="min-w-0 flex-1">
-          <h2
-            id={`section-${title.toLowerCase().replace(/\s+/g, "-")}`}
-            className="text-base font-bold text-secondary-900"
-          >
-            {title}
-          </h2>
-          {description && (
-            <p className="mt-0.5 text-xs text-secondary-400">{description}</p>
-          )}
-        </div>
+        {headerAction && <div className="shrink-0 ml-4">{headerAction}</div>}
       </div>
-
-      {/* Section body */}
       <div className="px-6 py-2 sm:px-8">{children}</div>
     </section>
   );
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Setting Row (static display)
+   Setting Row (read-only display)
 ───────────────────────────────────────────────────────────── */
 function SettingRow({ icon: Icon, label, description, value, pill, last = false }) {
   return (
@@ -145,7 +89,7 @@ function SettingRow({ icon: Icon, label, description, value, pill, last = false 
             {value}
           </span>
         ) : (
-          <span className="text-sm font-semibold text-secondary-700">{value}</span>
+          <span className="text-sm font-semibold text-secondary-700">{value || "—"}</span>
         )}
         <ChevronRight
           size={15}
@@ -157,9 +101,9 @@ function SettingRow({ icon: Icon, label, description, value, pill, last = false 
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Toggle Row
+   Input Row (editable text field)
 ───────────────────────────────────────────────────────────── */
-function ToggleRow({ id, icon: Icon, label, description, checked, onChange, last = false }) {
+function InputRow({ id, icon: Icon, label, description, value, onChange, disabled = false, last = false }) {
   return (
     <div
       className={`flex items-center justify-between gap-4 py-4 -mx-6 px-6 sm:-mx-8 sm:px-8 transition-colors duration-150 hover:bg-secondary-50/50 ${
@@ -173,19 +117,34 @@ function ToggleRow({ id, icon: Icon, label, description, checked, onChange, last
           </div>
         )}
         <div className="min-w-0">
-          <p className="text-sm font-medium text-secondary-800">{label}</p>
+          <label htmlFor={id} className="block text-sm font-medium text-secondary-800 cursor-pointer">
+            {label}
+          </label>
           {description && (
             <p className="mt-0.5 text-xs text-secondary-400">{description}</p>
           )}
         </div>
       </div>
-      <Toggle id={id} checked={checked} onChange={onChange} label={label} />
+
+      <input
+        id={id}
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        aria-label={label}
+        className={`w-48 sm:w-64 rounded-xl border border-secondary-200 bg-secondary-50 px-3.5 py-2 text-sm font-semibold text-secondary-800 shadow-sm outline-none transition-all duration-150 ${
+          disabled
+            ? "cursor-not-allowed opacity-60 bg-secondary-100"
+            : "hover:border-primary-300 focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100"
+        }`}
+      />
     </div>
   );
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Select Row
+   Select Row (editable select field)
 ───────────────────────────────────────────────────────────── */
 function SelectRow({ id, icon: Icon, label, description, value, options, onChange, last = false }) {
   return (
@@ -233,80 +192,171 @@ function SelectRow({ id, icon: Icon, label, description, value, options, onChang
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Theme Picker
-───────────────────────────────────────────────────────────── */
-function ThemePicker({ value, onChange }) {
-  const themes = [
-    { id: "Light", icon: Sun, label: "Light" },
-    { id: "Dark", icon: Moon, label: "Dark" },
-    { id: "System", icon: Monitor, label: "System" },
-  ];
-
-  return (
-    <div className="py-4 -mx-6 px-6 sm:-mx-8 sm:px-8">
-      <p className="mb-3 text-sm font-medium text-secondary-800">Theme</p>
-      <div className="grid grid-cols-3 gap-3" role="radiogroup" aria-label="Theme selection">
-        {themes.map(({ id, icon: Icon, label }) => {
-          const active = value === id;
-          return (
-            <button
-              key={id}
-              role="radio"
-              aria-checked={active}
-              onClick={() => onChange(id)}
-              className={`group relative flex flex-col items-center gap-2 rounded-2xl border-2 px-4 py-4 text-xs font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-500 ${
-                active
-                  ? "border-primary-500 bg-primary-50 text-primary-700 shadow-sm"
-                  : "border-secondary-200 bg-secondary-50 text-secondary-500 hover:border-secondary-300 hover:bg-white hover:shadow-sm"
-              }`}
-            >
-              <Icon size={20} className={active ? "text-primary-600" : "text-secondary-400 group-hover:text-secondary-600"} />
-              {label}
-              {active && (
-                <span className="absolute right-2 top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary-600">
-                  <Check size={9} className="text-white" />
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Demo disclaimer badge
-───────────────────────────────────────────────────────────── */
-function DemoBadge() {
-  return (
-    <div
-      role="note"
-      aria-label="Demo mode notice"
-      className="flex items-start gap-2.5 rounded-xl border border-primary-100 bg-primary-50 px-4 py-3 text-xs text-primary-700"
-    >
-      <Info size={14} className="mt-0.5 shrink-0 text-primary-500" />
-      <p>
-        <span className="font-semibold">Demo mode — </span>
-        Toggle and select changes update the local UI only. No data is sent to the backend.
-      </p>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
    Main Settings Component
 ───────────────────────────────────────────────────────────── */
 function Settings() {
-  const [toggles, setToggles] = useState(INITIAL_TOGGLES);
-  const [selects, setSelects] = useState(INITIAL_SELECTS);
+  const { user: authUser, setUser } = useContext(AuthContext);
 
-  function toggle(key) {
-    setToggles((prev) => ({ ...prev, [key]: !prev[key] }));
+  const [accountInfo, setAccountInfo] = useState({ name: "", bio: "", email: "" });
+  const [editAccountForm, setEditAccountForm] = useState({ name: "", bio: "" });
+  const [isEditingAccount, setIsEditingAccount] = useState(false);
+  const [savingAccount, setSavingAccount] = useState(false);
+
+  const [prefs, setPrefs] = useState({ travelStyle: "Mid-range", transport: "Flight", budget: "Medium" });
+  const [userId, setUserId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [savingPrefs, setSavingPrefs] = useState(false);
+  const [prefsDirty, setPrefsDirty] = useState(false);
+
+  // Load user + preferences on mount
+  useEffect(() => {
+    async function load() {
+      if (!authUser?.email) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const profile = await getUserByEmail(authUser.email);
+        const fetchedName = profile.fullName || profile.name || "";
+        const localBio = localStorage.getItem(`bio_${profile.id}`) || profile.bio || "";
+        const fetchedEmail = profile.email || authUser.email;
+
+        setAccountInfo({
+          name: fetchedName,
+          bio: localBio,
+          email: fetchedEmail,
+        });
+        setUserId(profile.id);
+
+        try {
+          const p = await getPreferences(profile.id);
+          setPrefs({
+            travelStyle: p.travelStyle || "Mid-range",
+            transport: p.transport || "Flight",
+            budget: p.budget || "Medium",
+          });
+        } catch {
+          // Preference record may not exist yet
+        }
+      } catch {
+        toast.error("Unable to load settings.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, [authUser]);
+
+  function handleStartEditingAccount() {
+    setEditAccountForm({
+      name: accountInfo.name,
+      bio: accountInfo.bio,
+    });
+    setIsEditingAccount(true);
   }
 
-  function select(key, value) {
-    setSelects((prev) => ({ ...prev, [key]: value }));
+  function handleCancelEditingAccount() {
+    setIsEditingAccount(false);
+  }
+
+  async function handleSaveAccount() {
+    if (!editAccountForm.name.trim()) {
+      toast.error("Full Name is required.");
+      return;
+    }
+
+    if (!accountInfo.email) {
+      toast.error("User email not found.");
+      return;
+    }
+
+    try {
+      setSavingAccount(true);
+
+      // Only send fields supported by UserService backend (fullName)
+      const payload = {
+        fullName: editAccountForm.name.trim(),
+      };
+
+      const updatedProfile = await updateUserByEmail(accountInfo.email, payload);
+
+      // Save bio in localStorage under key bio_<userId>
+      const newBio = editAccountForm.bio.trim();
+      if (userId) {
+        if (newBio) {
+          localStorage.setItem(`bio_${userId}`, newBio);
+        } else {
+          localStorage.removeItem(`bio_${userId}`);
+        }
+      }
+
+      const newAccountInfo = {
+        ...accountInfo,
+        name: updatedProfile.fullName || updatedProfile.name || editAccountForm.name.trim(),
+        bio: newBio,
+      };
+
+      setAccountInfo(newAccountInfo);
+
+      // Update AuthContext & localStorage user object
+      const updatedUser = {
+        ...authUser,
+        ...updatedProfile,
+        fullName: newAccountInfo.name,
+        bio: newBio,
+      };
+
+      if (setUser) {
+        setUser(updatedUser);
+      }
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      toast.success("Account information updated successfully.");
+      setIsEditingAccount(false);
+    } catch (err) {
+      toast.error(err.message || "Failed to update account information.");
+    } finally {
+      setSavingAccount(false);
+    }
+  }
+
+  function handlePrefChange(key, value) {
+    setPrefs((prev) => ({ ...prev, [key]: value }));
+    setPrefsDirty(true);
+  }
+
+  async function handleSavePrefs() {
+    if (!userId) return;
+
+    try {
+      setSavingPrefs(true);
+      await updatePreferences(userId, {
+        travelStyle: prefs.travelStyle,
+        budget: prefs.budget,
+        interests: [],
+      });
+      setPrefsDirty(false);
+      toast.success("AI preferences saved.");
+    } catch (err) {
+      toast.error(err.message || "Failed to save preferences.");
+    } finally {
+      setSavingPrefs(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex h-[60vh] items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
+            <p className="mt-4 text-secondary-500">Loading settings...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
   }
 
   return (
@@ -317,18 +367,15 @@ function Settings() {
         aria-label="Settings header"
         className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-sky-700 via-primary-600 to-cyan-500 p-6 text-white shadow-xl sm:mb-10 sm:rounded-3xl sm:p-8 lg:p-10"
       >
-        {/* Decorative blobs */}
         <div className="pointer-events-none absolute -right-10 -top-10 h-44 w-44 rounded-full bg-white/10 blur-2xl" />
         <div className="pointer-events-none absolute -bottom-8 left-1/3 h-28 w-56 rounded-full bg-cyan-300/20 blur-2xl" />
 
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
-          {/* Icon tile */}
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/20 ring-4 ring-white/20 backdrop-blur-sm">
             <SettingsIcon size={28} aria-hidden="true" />
           </div>
 
           <div>
-            {/* Badge */}
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-sm ring-1 ring-white/20">
               <Sparkles size={11} aria-hidden="true" />
               Personalize Your Experience
@@ -338,16 +385,11 @@ function Settings() {
               Settings
             </h1>
             <p className="mt-1.5 max-w-xl text-sm text-sky-100">
-              Manage your account, travel preferences, notifications, appearance and privacy in one place.
+              Manage your account details and AI travel preferences.
             </p>
           </div>
         </div>
       </section>
-
-      {/* ── Demo notice ───────────────────────────────── */}
-      <div className="mb-6">
-        <DemoBadge />
-      </div>
 
       {/* ── Settings grid ─────────────────────────────── */}
       <div className="grid gap-5">
@@ -358,26 +400,109 @@ function Settings() {
           iconColor="bg-primary-100 text-primary-700"
           title="Account"
           description="Your personal information and credentials"
+          headerAction={
+            !isEditingAccount ? (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleStartEditingAccount}
+                className="gap-1.5 text-xs font-semibold"
+              >
+                <Edit2 size={13} />
+                Edit Account
+              </Button>
+            ) : null
+          }
         >
-          <SettingRow
-            icon={User}
-            label="Display Name"
-            description="How you appear across the app"
-            value="Traveler"
-          />
-          <SettingRow
-            icon={Mail}
-            label="Email Address"
-            description="Used for login and notifications"
-            value="traveler@example.com"
-          />
-          <SettingRow
-            icon={Lock}
-            label="Password"
-            description="Last changed never"
-            value="••••••••"
-            last
-          />
+          {isEditingAccount ? (
+            <>
+              <InputRow
+                id="edit-account-name"
+                icon={User}
+                label="Display Name"
+                description="How you appear across the app"
+                value={editAccountForm.name}
+                onChange={(val) => setEditAccountForm((prev) => ({ ...prev, name: val }))}
+              />
+              <InputRow
+                id="edit-account-bio"
+                icon={User}
+                label="Bio"
+                description="A short description about yourself"
+                value={editAccountForm.bio}
+                onChange={(val) => setEditAccountForm((prev) => ({ ...prev, bio: val }))}
+              />
+              <InputRow
+                id="edit-account-email"
+                icon={Mail}
+                label="Email Address"
+                description="Used for login and notifications (Read-only)"
+                value={accountInfo.email}
+                onChange={() => {}}
+                disabled
+              />
+              <SettingRow
+                icon={Lock}
+                label="Password"
+                description="Last changed never"
+                value="••••••••"
+                last
+              />
+
+              <div className="flex gap-3 py-4 border-t border-secondary-100 mt-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleCancelEditingAccount}
+                  disabled={savingAccount}
+                  className="gap-1.5"
+                >
+                  <X size={14} />
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleSaveAccount}
+                  disabled={savingAccount}
+                  className="gap-1.5"
+                >
+                  <Check size={14} />
+                  {savingAccount ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <SettingRow
+                icon={User}
+                label="Display Name"
+                description="How you appear across the app"
+                value={accountInfo.name}
+              />
+              {accountInfo.bio && (
+                <SettingRow
+                  icon={User}
+                  label="Bio"
+                  description="A short description about yourself"
+                  value={accountInfo.bio}
+                />
+              )}
+              <SettingRow
+                icon={Mail}
+                label="Email Address"
+                description="Used for login and notifications"
+                value={accountInfo.email}
+              />
+              <SettingRow
+                icon={Lock}
+                label="Password"
+                description="Last changed never"
+                value="••••••••"
+                last
+              />
+            </>
+          )}
         </SettingsSection>
 
         {/* ── AI Preferences ──────────────────────────── */}
@@ -392,163 +517,49 @@ function Settings() {
             icon={Compass}
             label="Travel Style"
             description="Sets the tone for all AI-generated itineraries"
-            value={selects.travelStyle}
+            value={prefs.travelStyle}
             options={TRAVEL_STYLE_OPTS}
-            onChange={(v) => select("travelStyle", v)}
+            onChange={(v) => handlePrefChange("travelStyle", v)}
           />
           <SelectRow
             id="setting-transport"
             icon={Plane}
             label="Preferred Transport"
             description="Your default mode of getting around"
-            value={selects.transport}
+            value={prefs.transport}
             options={TRANSPORT_OPTS}
-            onChange={(v) => select("transport", v)}
+            onChange={(v) => handlePrefChange("transport", v)}
           />
           <SelectRow
             id="setting-budget"
             icon={CreditCard}
             label="Default Budget"
             description="Controls cost estimates in suggestions"
-            value={selects.budget}
+            value={prefs.budget}
             options={BUDGET_OPTS}
-            onChange={(v) => select("budget", v)}
+            onChange={(v) => handlePrefChange("budget", v)}
             last
           />
-        </SettingsSection>
 
-        {/* ── Notifications ───────────────────────────── */}
-        <SettingsSection
-          icon={Bell}
-          iconColor="bg-orange-100 text-orange-700"
-          title="Notifications"
-          description="Choose what you want to be notified about"
-        >
-          <ToggleRow
-            id="toggle-trip-reminders"
-            icon={Bell}
-            label="Trip Reminders"
-            description="Get reminders before your upcoming trips"
-            checked={toggles.tripReminders}
-            onChange={() => toggle("tripReminders")}
-          />
-          <ToggleRow
-            id="toggle-travel-updates"
-            icon={Globe}
-            label="Travel Updates"
-            description="Destination news, advisories and tips"
-            checked={toggles.travelUpdates}
-            onChange={() => toggle("travelUpdates")}
-          />
-          <ToggleRow
-            id="toggle-ai-recs"
-            icon={Sparkles}
-            label="AI Recommendations"
-            description="Personalised suggestions based on your preferences"
-            checked={toggles.aiRecommendations}
-            onChange={() => toggle("aiRecommendations")}
-          />
-          <ToggleRow
-            id="toggle-email-digest"
-            icon={Mail}
-            label="Weekly Email Digest"
-            description="A summary of new destinations and deals"
-            checked={toggles.emailDigest}
-            onChange={() => toggle("emailDigest")}
-          />
-          <ToggleRow
-            id="toggle-sms"
-            icon={Smartphone}
-            label="SMS Alerts"
-            description="Text messages for critical trip updates"
-            checked={toggles.smsAlerts}
-            onChange={() => toggle("smsAlerts")}
-          />
-          <ToggleRow
-            id="toggle-marketing"
-            icon={Megaphone}
-            label="Marketing Emails"
-            description="Promotions, offers and Itinera news"
-            checked={toggles.marketingEmails}
-            onChange={() => toggle("marketingEmails")}
-            last
-          />
-        </SettingsSection>
-
-        {/* ── Appearance ──────────────────────────────── */}
-        <SettingsSection
-          icon={Moon}
-          iconColor="bg-indigo-100 text-indigo-700"
-          title="Appearance"
-          description="Adjust how the interface looks and feels"
-        >
-          <ThemePicker
-            value={selects.theme}
-            onChange={(v) => select("theme", v)}
-          />
-          <SelectRow
-            id="setting-language"
-            icon={Languages}
-            label="Language"
-            description="Display language for the entire app"
-            value={selects.language}
-            options={LANGUAGE_OPTS}
-            onChange={(v) => select("language", v)}
-          />
-          <SelectRow
-            id="setting-currency"
-            icon={Wallet}
-            label="Currency"
-            description="Default currency for cost estimates"
-            value={selects.currency}
-            options={CURRENCY_OPTS}
-            onChange={(v) => select("currency", v)}
-            last
-          />
-        </SettingsSection>
-
-        {/* ── Privacy & Security ──────────────────────── */}
-        <SettingsSection
-          icon={Shield}
-          iconColor="bg-emerald-100 text-emerald-700"
-          title="Privacy &amp; Security"
-          description="Control your data, security and usage analytics"
-        >
-          <SettingRow
-            icon={Lock}
-            label="Data Protection"
-            description="Your data is encrypted end-to-end"
-            value="Enabled"
-            pill={{ color: "bg-emerald-100 text-emerald-700" }}
-          />
-          <SettingRow
-            icon={Database}
-            label="Saved Trips"
-            description="Where your itinerary data lives"
-            value="Stored Locally"
-          />
-          <ToggleRow
-            id="toggle-data-protection"
-            icon={Shield}
-            label="Enhanced Data Protection"
-            description="Apply extra encryption to your profile data"
-            checked={toggles.dataProtection}
-            onChange={() => toggle("dataProtection")}
-          />
-          <ToggleRow
-            id="toggle-analytics"
-            icon={Globe}
-            label="Usage Analytics"
-            description="Help improve Itinera by sharing anonymous usage data"
-            checked={toggles.analyticsTracking}
-            onChange={() => toggle("analyticsTracking")}
-            last
-          />
+          {/* Save button — only shown when user has made changes */}
+          {prefsDirty && (
+            <div className="pb-4 pt-2">
+              <Button
+                id="save-ai-prefs-btn"
+                variant="primary"
+                onClick={handleSavePrefs}
+                disabled={savingPrefs}
+                className="gap-2"
+              >
+                <Check size={15} />
+                {savingPrefs ? "Saving…" : "Save AI Preferences"}
+              </Button>
+            </div>
+          )}
         </SettingsSection>
 
       </div>
 
-      {/* Bottom breathing room */}
       <div className="h-8" />
     </DashboardLayout>
   );

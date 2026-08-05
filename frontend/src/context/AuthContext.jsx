@@ -63,7 +63,7 @@ function AuthProvider({ children }) {
     // 2. Create corresponding profile in USER-SERVICE
     try {
       await createUserProfile({
-        fullName: details.name,
+        fullName: details.fullName || details.name,
         email: details.email,
         password: details.password,
       });
@@ -84,6 +84,7 @@ function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         login,
         register,
         logout,

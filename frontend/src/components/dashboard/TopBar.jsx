@@ -1,11 +1,7 @@
 import { Bell, Search } from "lucide-react";
 import ProfileDropdown from "./ProfileDropdown";
-import useAuth from "../../hooks/useAuth";
 
 function TopBar() {
-  const { user } = useAuth();
-  const name = user?.fullName || user?.username || "User";
-
   return (
     <header className="sticky top-0 z-40 border-b border-secondary-200/80 bg-white/90 backdrop-blur-md">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-10">
@@ -32,10 +28,7 @@ function TopBar() {
 
         {/* Right Side */}
         <div className="ml-auto flex items-center gap-3 sm:gap-4">
-          <button className="relative rounded-xl p-2 text-secondary-600 transition hover:bg-secondary-100">
-            <Bell size={20} />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500"></span>
-          </button>
+      
 
           <ProfileDropdown />
         </div>

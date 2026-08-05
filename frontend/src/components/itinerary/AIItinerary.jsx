@@ -71,7 +71,6 @@ function ItineraryHeader({ dayCount }) {
 
 /* ── Main component ──────────────────────────────────────────────────────── */
 function AIItinerary({ aiRecommendation }) {
-console.log("ITINERARY DATA:", aiRecommendation);
   const days = useMemo(
     () => parseItinerary(aiRecommendation),
     [aiRecommendation]
