@@ -1,0 +1,19 @@
+# Database Requirements
+
+Database Name:
+AI Travel Planner
+
+Primary Entities
+
+- Users
+- Destinations
+- Trips
+- Preferences
+
+Database Features
+
+- Primary Keys
+- Foreign Keys
+- Indexes
+- Constraints
+- Auto Increment IDs

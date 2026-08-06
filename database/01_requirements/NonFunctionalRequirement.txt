@@ -1,0 +1,10 @@
+# Non Functional Requirements
+
+- MySQL Database
+- ACID Compliance
+- Data Integrity
+- Fast Query Execution
+- Foreign Key Constraints
+- Secure Password Storage
+- Scalability
+- Backup Support

@@ -1,3 +1,9 @@
-CREATE DATABASE ai_travel_website;
+CREATE DATABASE auth_db;
 
-USE ai_travel_website;
+CREATE DATABASE user_db;
+
+CREATE DATABASE destination_db;
+
+CREATE DATABASE preference_db;
+
+CREATE DATABASE trip_db;
